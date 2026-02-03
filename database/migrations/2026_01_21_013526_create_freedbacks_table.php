@@ -11,24 +11,21 @@ return new class extends Migration
      */
         public function up(): void
     {
-        Schema::create('laporans', function (Blueprint $table) {
+        Schema::create('feedbacks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('judul');
-            $table->text('isi');
-            $table->string('foto')->nullable()->change();
-            $table->string('lokasi')->nullable();
-            $table->enum('status', ['menunggu', 'diproses', 'selesai', 'ditolak'])->default('menunggu');
+            $table->foreignId('laporan_id')->constrained('laporans')->cascadeOnDelete();
+            $table->tinyInteger('rating'); // 1-5
+            $table->text('komentar')->nullable();
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporans');
+        Schema::dropIfExists('freedbacks');
     }
 };

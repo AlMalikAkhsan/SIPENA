@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('tanggapans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('laporan_id')->constrained('laporan')->onDelete('cascade');
-            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
-            $table->text('isi_tanggapan');
+            $table->foreignId('laporan_id')->constrained('laporans')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Admin yang menanggapi
+            $table->text('isi'); // Isi tanggapan
             $table->timestamps();
         });
-
     }
 
     /**

@@ -4,25 +4,27 @@
 <div class="container py-4">
     
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Laporan Saya</h2>
-            <p class="text-muted mb-0">Kelola dan pantau laporan yang Anda buat</p>
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+                <h2 class="fw-bold mb-1">Semua Laporan Warga</h2>
+                <p class="text-muted mb-0">Lihat dan pantau laporan dari seluruh warga</p>
+            </div>
+            <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-primary px-4">
+                <svg width="18" height="18" fill="currentColor" class="me-2" style="vertical-align: text-bottom;">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                Laporan Saya
+            </a>
         </div>
-        <a href="{{ route('warga.laporan.create') }}" class="btn btn-primary px-4 shadow-sm">
-            <svg width="18" height="18" fill="currentColor" class="me-2" style="vertical-align: text-bottom;">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            Buat Laporan Baru
-        </a>
     </div>
 
     <!-- Search & Filter -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
-            <form method="GET" action="{{ route('warga.laporan.index') }}">
+            <form method="GET" action="{{ route('warga.laporan.semua') }}">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <label class="form-label small fw-semibold text-muted">Cari Laporan</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">
@@ -45,16 +47,24 @@
                             <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
                         </select>
                     </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold text-muted">Urutkan</label>
+                        <select name="sort" class="form-select">
+                            <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru</option>
+                            <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama</option>
+                        </select>
+                    </div>
                     
-                    <div class="col-md-3 d-flex align-items-end gap-2">
+                    <div class="col-md-2 d-flex align-items-end gap-2">
                         <button type="submit" class="btn btn-primary flex-fill">
                             <svg width="16" height="16" fill="currentColor" class="me-1">
                                 <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
                             </svg>
                             Filter
                         </button>
-                        @if(request('search') || request('status'))
-                        <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-secondary">
+                        @if(request('search') || request('status') || request('sort'))
+                        <a href="{{ route('warga.laporan.semua') }}" class="btn btn-outline-secondary" title="Reset Filter">
                             <svg width="16" height="16" fill="currentColor">
                                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                             </svg>
@@ -71,7 +81,7 @@
         <div class="col-6 col-md-3">
             <div class="card border-0 bg-primary bg-opacity-10 h-100">
                 <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-primary mb-0">{{ $laporan->total() }}</h4>
+                    <h4 class="fw-bold text-primary mb-0">{{ $total }}</h4>
                     <small class="text-muted">Total Laporan</small>
                 </div>
             </div>
@@ -79,7 +89,7 @@
         <div class="col-6 col-md-3">
             <div class="card border-0 bg-warning bg-opacity-10 h-100">
                 <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-warning mb-0">{{ $laporan->where('status', 'menunggu')->count() }}</h4>
+                    <h4 class="fw-bold text-warning mb-0">{{ $menunggu }}</h4>
                     <small class="text-muted">Menunggu</small>
                 </div>
             </div>
@@ -87,7 +97,7 @@
         <div class="col-6 col-md-3">
             <div class="card border-0 bg-info bg-opacity-10 h-100">
                 <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-info mb-0">{{ $laporan->where('status', 'diproses')->count() }}</h4>
+                    <h4 class="fw-bold text-info mb-0">{{ $diproses }}</h4>
                     <small class="text-muted">Diproses</small>
                 </div>
             </div>
@@ -95,7 +105,7 @@
         <div class="col-6 col-md-3">
             <div class="card border-0 bg-success bg-opacity-10 h-100">
                 <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-success mb-0">{{ $laporan->where('status', 'selesai')->count() }}</h4>
+                    <h4 class="fw-bold text-success mb-0">{{ $selesai }}</h4>
                     <small class="text-muted">Selesai</small>
                 </div>
             </div>
@@ -111,7 +121,7 @@
                     <!-- Image -->
                     @if($item->foto)
                         <div class="position-relative overflow-hidden" style="height: 200px;">
-                            <img src="{{ asset('uploads/'.$item->foto) }}" 
+                            <img src="{{ Storage::url($item->foto) }}" 
                                  class="w-100 h-100" 
                                  style="object-fit: cover;"
                                  alt="{{ $item->judul }}">
@@ -159,12 +169,27 @@
                             {{ Str::limit($item->isi, 90) }}
                         </p>
 
+                        <!-- User Info -->
+                        <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                                <svg width="16" height="16" fill="currentColor" class="text-primary">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="small fw-semibold">{{ $item->user->name ?? 'Anonim' }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">
+                                    {{ $item->created_at->format('d M Y, H:i') }}
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center gap-2 text-muted small">
                                 <svg width="14" height="14" fill="currentColor">
                                     <path d="M9 11H7v2h2v-2zm4-8h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
                                 </svg>
-                                <span>{{ $item->created_at->format('d M Y') }}</span>
+                                <span>{{ $item->created_at->diffForHumans() }}</span>
                             </div>
                             
                             <a href="{{ route('warga.laporan.show', $item->id) }}" 
@@ -176,45 +201,6 @@
                             </a>
                         </div>
                     </div>
-
-                    <!-- Action Buttons (for pending reports) -->
-                    @if($item->status == 'menunggu')
-                        <div class="card-footer bg-white border-top py-3">
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('warga.laporan.edit', $item->id) }}" 
-                                   class="btn btn-sm btn-outline-secondary flex-fill">
-                                    <svg width="14" height="14" fill="currentColor" class="me-1">
-                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                                    </svg>
-                                    Edit
-                                </a>
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-danger flex-fill" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#deleteModal{{ $item->id }}">
-                                    <svg width="14" height="14" fill="currentColor" class="me-1">
-                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                    </svg>
-                                    Hapus
-                                </button>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Di bagian action buttons untuk setiap laporan -->
-                    @if($item->status == 'selesai')
-                        <form action="{{ route('warga.laporan.archive', $item->id) }}" 
-                            method="POST" 
-                            class="d-inline">
-                            @csrf
-                            <button type="submit" 
-                                    class="btn btn-sm btn-outline-secondary"
-                                    title="Pindahkan ke riwayat">
-                                <i class="fas fa-archive me-1"></i>
-                                Arsipkan
-                            </button>
-                        </form>
-                    @endif
                 </div>
             </div>
         @empty
@@ -235,11 +221,11 @@
                             @if(request('search') || request('status'))
                                 Tidak ada laporan yang sesuai dengan pencarian Anda. Coba gunakan kata kunci lain.
                             @else
-                                Anda belum membuat laporan apapun. Mulai buat laporan pertama Anda sekarang!
+                                Belum ada laporan dari warga. Jadilah yang pertama membuat laporan!
                             @endif
                         </p>
                         @if(request('search') || request('status'))
-                            <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-primary me-2">
+                            <a href="{{ route('warga.laporan.semua') }}" class="btn btn-outline-primary me-2">
                                 <svg width="16" height="16" fill="currentColor" class="me-1">
                                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                                 </svg>
@@ -266,114 +252,6 @@
     @endif
 
 </div>
-
-<!-- Modal Konfirmasi Hapus - DIPINDAH KE LUAR LOOP -->
-@foreach($laporan as $item)
-    @if($item->status == 'menunggu')
-        <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
-                    <!-- Header dengan gradient -->
-                    <div class="modal-header border-0 text-white" style="background: linear-gradient(135deg, #EF476F 0%, #D83A5D 100%); padding: 1.5rem;">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-white bg-opacity-25 rounded-circle p-3">
-                                <svg width="32" height="32" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h5 class="modal-title fw-bold mb-0" id="deleteModalLabel{{ $item->id }}">Konfirmasi Hapus</h5>
-                                <small class="opacity-75">Tindakan ini tidak dapat dibatalkan</small>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    
-                    <!-- Body -->
-                    <div class="modal-body p-4">
-                        <div class="text-center mb-4">
-                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex p-4 mb-3">
-                                <svg width="48" height="48" fill="currentColor" class="text-danger">
-                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                </svg>
-                            </div>
-                            <h5 class="fw-bold mb-2">Yakin ingin menghapus?</h5>
-                            <p class="text-muted mb-0">
-                                Laporan "<strong>{{ Str::limit($item->judul, 50) }}</strong>" akan dihapus secara permanen.
-                            </p>
-                        </div>
-
-                        <!-- Info Laporan -->
-                        <div class="bg-light rounded-3 p-3 mb-3">
-                            <div class="row g-2 small">
-                                <div class="col-6">
-                                    <span class="text-muted">ID Laporan:</span>
-                                    <div class="fw-semibold">#{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <span class="text-muted">Status:</span>
-                                    <div>
-                                        <span class="badge badge-sm 
-                                            @if($item->status == 'menunggu') bg-warning
-                                            @elseif($item->status == 'diproses') bg-info
-                                            @else bg-success
-                                            @endif
-                                        ">
-                                            {{ ucfirst($item->status) }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <span class="text-muted">Dibuat:</span>
-                                    <div class="fw-semibold">{{ $item->created_at->format('d M Y, H:i') }}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="alert alert-warning border-0 mb-0" style="background: rgba(255, 210, 63, 0.1);">
-                            <div class="d-flex gap-2">
-                                <svg width="20" height="20" fill="currentColor" class="text-warning flex-shrink-0 mt-1">
-                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                                </svg>
-                                <small class="text-dark">
-                                    <strong>Perhatian:</strong> Data yang sudah dihapus tidak dapat dikembalikan.
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Footer -->
-                    <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" 
-                                class="btn btn-light px-4" 
-                                data-bs-dismiss="modal"
-                                style="border-radius: 10px;">
-                            <svg width="16" height="16" fill="currentColor" class="me-1">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                            </svg>
-                            Batal
-                        </button>
-                        
-                        <form action="{{ route('warga.laporan.destroy', $item->id) }}" 
-                              method="POST" 
-                              class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" 
-                                    class="btn btn-danger px-4"
-                                    style="border-radius: 10px; background: linear-gradient(135deg, #EF476F 0%, #D83A5D 100%); border: none;">
-                                <svg width="16" height="16" fill="currentColor" class="me-1">
-                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                </svg>
-                                Ya, Hapus
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-@endforeach
 
 <style>
 .hover-lift {
@@ -422,8 +300,7 @@
 }
 
 .btn-outline-primary:hover,
-.btn-outline-secondary:hover,
-.btn-outline-danger:hover {
+.btn-outline-secondary:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -437,15 +314,6 @@
     background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-}
-
-/* Modal Animation */
-.modal.fade .modal-dialog {
-    transition: transform 0.3s ease-out;
-}
-
-.modal.show .modal-dialog {
-    transform: none;
 }
 
 /* Pagination Style */
