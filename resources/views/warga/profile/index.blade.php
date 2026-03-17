@@ -1,93 +1,297 @@
-@extends('layouts.app')
+@extends('layouts.user')
+
+@section('title', 'Profil Saya - Lapor Aja!')
+
+@push('styles')
+<style>
+    :root {
+        --primary: #4fc3f7;
+        --primary-dark: #0288d1;
+        --primary-soft: #81d4fa;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-bg: rgba(255, 255, 255, 0.78);
+        --shadow-soft: 0 8px 32px rgba(79, 195, 247, 0.12);
+        --shadow-hover: 0 12px 40px rgba(79, 195, 247, 0.22);
+        --radius-lg: 20px;
+        --radius-md: 16px;
+    }
+
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 4rem;
+    }
+
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .breadcrumb {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .profile-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin: 0.5rem 0 0.25rem;
+    }
+
+    .profile-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        background: rgba(79, 195, 247, 0.1);
+        color: var(--primary);
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 2rem;
+    }
+
+    .profile-sidebar {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        height: fit-content;
+    }
+
+    .avatar-section {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 24px;
+        object-fit: cover;
+        border: 4px solid rgba(129, 212, 250, 0.3);
+        box-shadow: 0 6px 20px rgba(79, 195, 247, 0.2);
+        margin-bottom: 1.25rem;
+    }
+
+    .avatar-placeholder {
+        width: 140px;
+        height: 140px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, var(--primary-soft), var(--primary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        color: white;
+        font-size: 3.5rem;
+        font-weight: bold;
+        box-shadow: 0 6px 20px rgba(79, 195, 247, 0.3);
+    }
+
+    .btn-edit {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .btn-edit:hover {
+        background: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .profile-main {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(129, 212, 250, 0.15);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .detail-item label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-item p {
+        font-size: 1.05rem;
+        color: var(--text-dark);
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .security-section {
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(129, 212, 250, 0.15);
+    }
+
+    .security-info {
+        background: rgba(227, 242, 253, 0.4);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .security-info p {
+        margin: 0;
+        color: var(--text-muted);
+    }
+
+    .activity-placeholder {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: rgba(227, 242, 253, 0.3);
+        border-radius: 16px;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 992px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-avatar, .avatar-placeholder {
+            width: 110px;
+            height: 110px;
+        }
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="profile-container">
+
+    <!-- Header -->
     <div class="profile-header">
         <div class="breadcrumb">
-            <a href="{{ route('warga.dashboard') }}">Dashboard</a>
-            <span>/</span>
-            <span>Profile Saya</span>
+            <a href="{{ route('warga.dashboard') }}">Beranda</a> / Profil Saya
         </div>
-        <h2>{{ Auth::user()->name }}</h2>
-        <span class="profile-badge">Warga {{ Auth::user()->rw }} / {{ Auth::user()->rt }}</span>
-
+        <h2>{{ Auth::user()->name ?? 'Warga RW 05' }}</h2>
+        <span class="profile-badge">
+            Warga {{ Auth::user()->rw ?? '05' }} / RT {{ Auth::user()->rt ?? '?' }} • Aktif
+        </span>
     </div>
 
     @if(session('success'))
-    <div class="alert alert-success">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
-        </svg>
-        {{ session('success') }}
-    </div>
+        <div class="alert alert-success d-flex align-items-center gap-3 mb-4 rounded-3 shadow-sm">
+            <i class="fas fa-check-circle fa-lg text-success"></i>
+            {{ session('success') }}
+        </div>
     @endif
 
     <div class="profile-grid">
-        <!-- Profile Summary Card -->
-        <div class="profile-card">
-            <div class="profile-avatar-section">
+
+        <!-- Sidebar Profile -->
+        <div class="profile-sidebar">
+            <div class="avatar-section">
                 @if(Auth::user()->avatar)
-                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="profile-avatar">
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Foto Profil" class="profile-avatar">
                 @else
-                    <div class="profile-avatar-placeholder">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="currentColor"/>
-                            <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="currentColor"/>
-                        </svg>
+                    <div class="avatar-placeholder">
+                        {{ strtoupper(substr(Auth::user()->name ?? 'W', 0, 1)) }}
                     </div>
                 @endif
-                <h2>{{ Auth::user()->name ?? 'Nama Belum Diisi' }}</h2>
-                <p class="profile-username">{{ '@' . Auth::user()->username ?? 'username' }}</p>
-                <span class="profile-badge">Member Aktif</span>
+                <h3 style="margin: 0.5rem 0 0.25rem;">{{ Auth::user()->name }}</h3>
+                <p class="text-muted small mb-3">{{ Auth::user()->email }}</p>
             </div>
 
-            <div class="profile-stats">
-                <div class="stat-item">
-                    <div class="stat-label">Bergabung</div>
-                    <div class="stat-value">{{ Auth::user()->created_at->format('d M Y') }}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Email</div>
-                    <div class="stat-value">{{ Auth::user()->email }}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">No HP</div>
-                    <div class="stat-value">{{ Auth::user()->no_hp ?? '-' }}</div>
-                </div>
+            <div class="text-center">
+                <a href="{{ route('warga.profile.edit') }}" class="btn btn-edit">
+                    <i class="fas fa-edit me-2"></i> Edit Profil
+                </a>
             </div>
 
-            <a href="{{ route('warga.profile.update') }}" class="btn btn-primary btn-block">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.8463 2.6543C15.6273 1.87325 16.8983 1.87325 17.6793 2.6543C18.4604 3.43535 18.4604 4.70635 17.6793 5.4874L6.41422 16.7525L2.5 17.5L3.24752 13.5858L14.5126 2.32076L14.8463 2.6543Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Edit Profile
-            </a>
+            <div class="mt-4">
+                <div class="detail-item">
+                    <label>Bergabung Sejak</label>
+                    <p>{{ Auth::user()->created_at->format('d F Y') }}</p>
+                </div>
+                <div class="detail-item mt-3">
+                    <label>No HP</label>
+                    <p>{{ Auth::user()->no_hp ?? '-' }}</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Profile Details -->
-        <div class="profile-details">
-            <div class="detail-section">
+        <!-- Main Content -->
+        <div class="profile-main">
+
+            <!-- Informasi Personal -->
+            <div class="mb-5">
                 <h3 class="section-title">Informasi Personal</h3>
                 <div class="detail-grid">
                     <div class="detail-item">
                         <label>Nama Lengkap</label>
-                        <p>{{ Auth::user()->name }}</p>
+                        <p>{{ Auth::user()->name ?? '-' }}</p>
                     </div>
-
                     <div class="detail-item">
                         <label>NIK</label>
                         <p>{{ Auth::user()->nik ?? '-' }}</p>
                     </div>
-
                     <div class="detail-item">
                         <label>Tanggal Lahir</label>
                         <p>
-                            {{ Auth::user()->tanggal_lahir
-                                ? \Carbon\Carbon::parse(Auth::user()->tanggal_lahir)->format('d F Y')
+                            {{ Auth::user()->tanggal_lahir 
+                                ? \Carbon\Carbon::parse(Auth::user()->tanggal_lahir)->format('d F Y') 
                                 : '-' }}
                         </p>
                     </div>
-
                     <div class="detail-item">
                         <label>Jenis Kelamin</label>
                         <p>{{ Auth::user()->gender ?? '-' }}</p>
@@ -95,30 +299,26 @@
                 </div>
             </div>
 
-
-            <div class="detail-section">
-                <h3 class="section-title">Informasi Kontak & Wilayah</h3>
+            <!-- Kontak & Wilayah -->
+            <div class="mb-5">
+                <h3 class="section-title">Kontak & Wilayah</h3>
                 <div class="detail-grid">
                     <div class="detail-item">
                         <label>Email</label>
                         <p>{{ Auth::user()->email }}</p>
                     </div>
-
                     <div class="detail-item">
                         <label>No HP</label>
                         <p>{{ Auth::user()->no_hp ?? '-' }}</p>
                     </div>
-
                     <div class="detail-item full-width">
-                        <label>Alamat</label>
-                        <p>{{ Auth::user()->alamat ?? '-' }}</p>
+                        <label>Alamat Lengkap</label>
+                        <p>{{ Auth::user()->alamat ?? 'Belum diisi' }}</p>
                     </div>
-
                     <div class="detail-item">
                         <label>RW</label>
-                        <p>{{ Auth::user()->rw ?? '-' }}</p>
+                        <p>{{ Auth::user()->rw ?? '05' }}</p>
                     </div>
-
                     <div class="detail-item">
                         <label>RT</label>
                         <p>{{ Auth::user()->rt ?? '-' }}</p>
@@ -126,351 +326,33 @@
                 </div>
             </div>
 
+            <!-- Keamanan -->
+            <div class="security-section">
+                <h3 class="section-title">Keamanan Akun</h3>
+                <div class="security-info">
+                    <p class="mb-2">
+                        <i class="fas fa-shield-alt text-primary me-2"></i>
+                        Password terakhir diperbarui: {{ Auth::user()->password_changed_at 
+                            ? Auth::user()->password_changed_at->diffForHumans() 
+                            : Auth::user()->updated_at->diffForHumans() }}
+                    </p>
+                    <a href="{{ route('warga.profile.edit') . '#password' }}" class="btn btn-outline-secondary btn-sm mt-2">
+                        <i class="fas fa-key me-2"></i>Ubah Password
+                    </a>
+                </div>
+            </div>
 
-            <div class="detail-section">
-                <h3 class="section-title">Keamanan</h3>
-                <p>Password terakhir diperbarui {{ Auth::user()->updated_at->diffForHumans() }}</p>
-                <a href="{{ route('warga.profile.update') }}" class="btn btn-outline btn-sm">
-                    Ubah Password
-                </a>
+            <!-- Aktivitas Terbaru (Placeholder) -->
+            <div class="mt-5">
+                <h3 class="section-title">Aktivitas Terbaru</h3>
+                <div class="activity-placeholder">
+                    <i class="far fa-clock fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Belum ada aktivitas terbaru yang tercatat.</p>
+                    <small>Anda bisa melihat riwayat laporan di menu "Laporan Saya"</small>
+                </div>
             </div>
 
         </div>
     </div>
 </div>
-
-<style>
-:root {
-    --primary: #2D3250;
-    --primary-light: #424769;
-    --accent: #7077A1;
-    --accent-bright: #F6B17A;
-    --bg-main: #F8F9FC;
-    --bg-card: #FFFFFF;
-    --text-primary: #1A1D2E;
-    --text-secondary: #6B7280;
-    --border: #E5E7EB;
-    --success: #10B981;
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.profile-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.profile-header {
-    margin-bottom: 2rem;
-}
-
-.breadcrumb {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-}
-
-.breadcrumb a {
-    color: var(--accent);
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    color: var(--primary);
-}
-
-.breadcrumb span {
-    margin: 0 0.5rem;
-}
-
-.profile-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin: 0;
-}
-
-.alert {
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    animation: slideDown 0.4s ease-out;
-}
-
-.alert-success {
-    background: #D1FAE5;
-    color: var(--success);
-}
-
-.profile-grid {
-    display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 2rem;
-}
-
-.profile-card {
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border);
-    height: fit-content;
-}
-
-.profile-avatar-section {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 20px;
-    object-fit: cover;
-    border: 4px solid var(--accent-bright);
-    margin-bottom: 1rem;
-}
-
-.profile-avatar-placeholder {
-    width: 120px;
-    height: 120px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, var(--accent-bright), var(--accent));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    color: white;
-}
-
-.profile-avatar-section h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 0.25rem;
-}
-
-.profile-username {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-}
-
-.profile-badge {
-    display: inline-block;
-    padding: 0.375rem 1rem;
-    background: #D1FAE5;
-    color: var(--success);
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.profile-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-.stat-value {
-    font-weight: 600;
-    color: var(--primary);
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.5rem;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-size: 1rem;
-}
-
-.btn-primary {
-    background: var(--accent-bright);
-    color: var(--primary);
-    box-shadow: 0 4px 12px rgba(246, 177, 122, 0.3);
-}
-
-.btn-primary:hover {
-    background: #FFB366;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(246, 177, 122, 0.4);
-}
-
-.btn-block {
-    width: 100%;
-}
-
-.btn-outline {
-    background: white;
-    color: var(--text-primary);
-    border: 2px solid var(--border);
-}
-
-.btn-outline:hover {
-    background: var(--bg-main);
-    border-color: var(--accent);
-}
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-}
-
-.profile-details {
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border);
-}
-
-.detail-section {
-    margin-bottom: 2.5rem;
-}
-
-.detail-section:last-child {
-    margin-bottom: 0;
-}
-
-.section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--border);
-}
-
-.detail-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-}
-
-.detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.detail-item.full-width {
-    grid-column: 1 / -1;
-}
-
-.detail-item label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.detail-item p {
-    font-size: 1rem;
-    color: var(--text-primary);
-    font-weight: 500;
-}
-
-.security-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.security-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.25rem;
-    background: var(--bg-main);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-}
-
-.security-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--accent-bright);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-}
-
-.security-item > div {
-    flex: 1;
-}
-
-.security-item h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 0.25rem;
-}
-
-.security-item p {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 968px) {
-    .profile-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 640px) {
-    .profile-container {
-        padding: 1rem;
-    }
-
-    .security-item {
-        flex-direction: column;
-        text-align: center;
-    }
-}
-</style>
 @endsection

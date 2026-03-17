@@ -1,64 +1,371 @@
-@extends('layouts.app')
+@extends('layouts.user')
+
+@section('title', 'Laporan Saya - Lapor Aja!')
+
+@push('styles')
+<style>
+    :root {
+        --primary: #4fc3f7;
+        --primary-dark: #0288d1;
+        --primary-soft: #81d4fa;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --shadow-soft: 0 8px 32px rgba(79, 195, 247, 0.12);
+        --shadow-hover: 0 12px 40px rgba(79, 195, 247, 0.22);
+        --radius-lg: 20px;
+        --radius-md: 16px;
+    }
+
+    body {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fe 100%);
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-soft);
+    }
+
+    .page-header h2 {
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-filter-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .report-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .report-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(129, 212, 250, 0.4);
+    }
+
+    .report-image {
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    }
+
+    .report-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .report-card:hover .report-image img {
+        transform: scale(1.08);
+    }
+
+    .report-placeholder {
+        height: 200px;
+        background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 3.5rem;
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .status-menunggu { 
+        background: rgba(249, 115, 22, 0.95);
+        color: white;
+    }
+    .status-diproses { 
+        background: rgba(59, 130, 246, 0.95);
+        color: white;
+    }
+    .status-selesai { 
+        background: rgba(34, 197, 94, 0.95);
+        color: white;
+    }
+    .status-ditolak { 
+        background: rgba(239, 68, 68, 0.95);
+        color: white;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .stats-value {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .card-body-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .report-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .report-description {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex: 1;
+    }
+
+    .report-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(129, 212, 250, 0.2);
+    }
+
+    .report-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .card-footer-actions {
+        background: transparent;
+        border-top: 1px solid rgba(129, 212, 250, 0.2);
+        padding: 1rem 1.5rem;
+    }
+
+    .btn-filter-reset {
+        white-space: nowrap;
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 6rem 2rem;
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        border: 2px dashed rgba(129, 212, 250, 0.4);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        color: #cbd5e1;
+        margin-bottom: 1.5rem;
+    }
+
+    .pagination {
+        margin-top: 2rem;
+    }
+
+    .pagination .page-link {
+        border-radius: 8px;
+        color: var(--primary);
+        border: 1px solid rgba(129, 212, 250, 0.3);
+        margin: 0 4px;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+    }
+
+    .pagination .page-link:hover {
+        background: var(--primary-soft);
+        border-color: var(--primary-soft);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
+    }
+
+    .modal-content {
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+        .report-image, .report-placeholder { 
+            height: 180px; 
+        }
+        .stats-value { 
+            font-size: 1.75rem; 
+        }
+        .page-header {
+            padding: 1.5rem;
+        }
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .report-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="container py-4">
-    
+
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Laporan Saya</h2>
-            <p class="text-muted mb-0">Kelola dan pantau laporan yang Anda buat</p>
+    <div class="page-header">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h2 class="fw-bold mb-2">📋 Laporan Saya</h2>
+                <p class="mb-0 opacity-90">Pantau dan kelola semua laporan yang kamu buat</p>
+            </div>
+            <a href="{{ route('warga.laporan.create') }}" class="btn btn-light btn-lg shadow-sm">
+                <i class="fas fa-plus-circle me-2"></i> Buat Laporan Baru
+            </a>
         </div>
-        <a href="{{ route('warga.laporan.create') }}" class="btn btn-primary px-4 shadow-sm">
-            <svg width="18" height="18" fill="currentColor" class="me-2" style="vertical-align: text-bottom;">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            Buat Laporan Baru
-        </a>
     </div>
 
     <!-- Search & Filter -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form method="GET" action="{{ route('warga.laporan.index') }}">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold text-muted">Cari Laporan</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0">
-                                <svg width="16" height="16" fill="currentColor">
-                                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                                </svg>
-                            </span>
-                            <input type="text" name="search" class="form-control border-start-0" 
-                                   placeholder="Cari berdasarkan judul atau isi laporan..." 
-                                   value="{{ request('search') }}">
-                        </div>
+    <div class="search-filter-card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form method="GET" action="{{ route('warga.laporan.index') }}" class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted fw-semibold mb-2">
+                        <i class="fas fa-search me-1"></i> Pencarian
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control border-start-0" 
+                               placeholder="Cari judul atau isi laporan..." 
+                               value="{{ request('search') }}">
                     </div>
-                    
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold text-muted">Status</label>
-                        <select name="status" class="form-select">
-                            <option value="">Semua Status</option>
-                            <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-                            <option value="diproses" {{ request('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
-                            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                        </select>
-                    </div>
-                    
-                    <div class="col-md-3 d-flex align-items-end gap-2">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold mb-2">
+                        <i class="fas fa-filter me-1"></i> Status
+                    </label>
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                        <option value="diproses" {{ request('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                        <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                        <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small text-muted fw-semibold mb-2 opacity-0 d-none d-md-block">Action</label>
+                    <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary flex-fill">
-                            <svg width="16" height="16" fill="currentColor" class="me-1">
-                                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
-                            </svg>
-                            Filter
+                            <i class="fas fa-filter me-2"></i> Terapkan Filter
                         </button>
                         @if(request('search') || request('status'))
-                        <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-secondary">
-                            <svg width="16" height="16" fill="currentColor">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                            </svg>
-                        </a>
+                            <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-secondary btn-filter-reset" title="Reset Filter">
+                                <i class="fas fa-redo"></i>
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -67,191 +374,135 @@
     </div>
 
     <!-- Stats Summary -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="card border-0 bg-primary bg-opacity-10 h-100">
-                <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-primary mb-0">{{ $laporan->total() }}</h4>
-                    <small class="text-muted">Total Laporan</small>
-                </div>
-            </div>
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-value text-primary">{{ $stats['total'] }}</div>
+            <div class="stats-label">Total Laporan</div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 bg-warning bg-opacity-10 h-100">
-                <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-warning mb-0">{{ $laporan->where('status', 'menunggu')->count() }}</h4>
-                    <small class="text-muted">Menunggu</small>
-                </div>
-            </div>
+        <div class="stats-card">
+            <div class="stats-value text-warning">{{ $stats['menunggu'] }}</div>
+            <div class="stats-label">Menunggu</div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 bg-info bg-opacity-10 h-100">
-                <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-info mb-0">{{ $laporan->where('status', 'diproses')->count() }}</h4>
-                    <small class="text-muted">Diproses</small>
-                </div>
-            </div>
+        <div class="stats-card">
+            <div class="stats-value text-info">{{ $stats['diproses'] }}</div>
+            <div class="stats-label">Diproses</div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="card border-0 bg-success bg-opacity-10 h-100">
-                <div class="card-body text-center py-3">
-                    <h4 class="fw-bold text-success mb-0">{{ $laporan->where('status', 'selesai')->count() }}</h4>
-                    <small class="text-muted">Selesai</small>
-                </div>
-            </div>
+        <div class="stats-card">
+            <div class="stats-value text-success">{{ $stats['selesai'] }}</div>
+            <div class="stats-label">Selesai</div>
+        </div>
+        <div class="stats-card">
+            <div class="stats-value text-danger">{{ $stats['ditolak'] }}</div>
+            <div class="stats-label">Ditolak</div>
         </div>
     </div>
 
-    <!-- Laporan Cards -->
-    <div class="row g-3 g-lg-4">
+    <!-- Laporan List -->
+    <div class="row g-4">
         @forelse($laporan as $item)
             <div class="col-12 col-md-6 col-lg-4">
-                <div class="card border-0 shadow-sm h-100 hover-lift">
-                    
-                    <!-- Image -->
-                    @if($item->foto)
-                        <div class="position-relative overflow-hidden" style="height: 200px;">
-                            <img src="{{ asset('uploads/'.$item->foto) }}" 
-                                 class="w-100 h-100" 
-                                 style="object-fit: cover;"
-                                 alt="{{ $item->judul }}">
-                            
-                            <!-- Status Badge Overlay -->
-                            <div class="position-absolute top-0 end-0 m-3">
-                                <span class="badge rounded-pill px-3 py-2 shadow-sm
-                                    @if($item->status == 'menunggu') bg-warning
-                                    @elseif($item->status == 'diproses') bg-info
-                                    @else bg-success @endif
-                                ">
-                                    {{ ucfirst($item->status) }}
-                                </span>
-                            </div>
+                <div class="report-card">
+                    {{-- Foto atau Placeholder --}}
+                    @if($item->fotos && $item->fotos->count() > 0)
+                        <div class="report-image">
+                            <img src="{{ asset('storage/' . $item->fotos->first()->foto_path) }}" 
+                                 alt="{{ $item->judul }}"
+                                 loading="lazy">
+                            <span class="status-badge status-{{ $item->status }}">
+                                <span class="status-dot bg-white"></span>
+                                {{ ucfirst($item->status) }}
+                            </span>
                         </div>
                     @else
-                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <svg width="64" height="64" fill="currentColor" class="text-muted">
-                                <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                            </svg>
+                        <div class="report-placeholder">
+                            <i class="far fa-image"></i>
+                            <span class="status-badge status-{{ $item->status }}">
+                                <span class="status-dot bg-white"></span>
+                                {{ ucfirst($item->status) }}
+                            </span>
                         </div>
                     @endif
 
-                    <!-- Card Body -->
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h6 class="fw-bold mb-0 flex-grow-1">{{ Str::limit($item->judul, 40) }}</h6>
-                            @if(!$item->foto)
-                                <span class="badge rounded-pill px-3 py-2 ms-2
-                                    @if($item->status == 'menunggu') bg-warning bg-opacity-10 text-warning
-                                    @elseif($item->status == 'diproses') bg-info bg-opacity-10 text-info
-                                    @else bg-success bg-opacity-10 text-success @endif
-                                ">
-                                    <span class="status-dot me-2
-                                        @if($item->status == 'menunggu') bg-warning
-                                        @elseif($item->status == 'diproses') bg-info
-                                        @else bg-success @endif
-                                    "></span>
-                                    {{ ucfirst($item->status) }}
-                                </span>
-                            @endif
-                        </div>
+                    {{-- Card Body --}}
+                    <div class="card-body-content">
+                        <h5 class="report-title">{{ Str::limit($item->judul, 50) }}</h5>
                         
-                        <p class="text-muted small mb-3">
-                            {{ Str::limit($item->isi, 90) }}
+                        <p class="report-description">
+                            {{ Str::limit($item->isi, 100) }}
                         </p>
 
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center gap-2 text-muted small">
-                                <svg width="14" height="14" fill="currentColor">
-                                    <path d="M9 11H7v2h2v-2zm4-8h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
-                                </svg>
+                        {{-- Meta Info --}}
+                        <div class="report-meta">
+                            <div class="report-date">
+                                <i class="fas fa-calendar-alt"></i>
                                 <span>{{ $item->created_at->format('d M Y') }}</span>
                             </div>
-                            
                             <a href="{{ route('warga.laporan.show', $item->id) }}" 
-                               class="btn btn-sm btn-outline-primary">
-                                Detail
-                                <svg width="14" height="14" fill="currentColor" class="ms-1">
-                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-                                </svg>
+                               class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
 
-                    <!-- Action Buttons (for pending reports) -->
+                    {{-- Action Buttons --}}
                     @if($item->status == 'menunggu')
-                        <div class="card-footer bg-white border-top py-3">
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('warga.laporan.edit', $item->id) }}" 
-                                   class="btn btn-sm btn-outline-secondary flex-fill">
-                                    <svg width="14" height="14" fill="currentColor" class="me-1">
-                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                                    </svg>
-                                    Edit
-                                </a>
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-danger flex-fill" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#deleteModal{{ $item->id }}">
-                                    <svg width="14" height="14" fill="currentColor" class="me-1">
-                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                    </svg>
-                                    Hapus
-                                </button>
-                            </div>
+                        <div class="card-footer-actions d-flex gap-2">
+                            <a href="{{ route('warga.laporan.edit', $item->id) }}" 
+                               class="btn btn-sm btn-outline-secondary flex-fill">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger flex-fill"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ $item->id }}">
+                                <i class="fas fa-trash-alt me-1"></i> Hapus
+                            </button>
                         </div>
                     @endif
 
-                    <!-- Di bagian action buttons untuk setiap laporan -->
                     @if($item->status == 'selesai')
-                        <form action="{{ route('warga.laporan.archive', $item->id) }}" 
-                            method="POST" 
-                            class="d-inline">
-                            @csrf
-                            <button type="submit" 
-                                    class="btn btn-sm btn-outline-secondary"
-                                    title="Pindahkan ke riwayat">
-                                <i class="fas fa-archive me-1"></i>
-                                Arsipkan
-                            </button>
-                        </form>
+                        <div class="card-footer-actions">
+                            <form action="{{ route('warga.laporan.archive', $item->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="fas fa-archive me-1"></i> Arsipkan Laporan
+                                </button>
+                            </form>
+                        </div>
                     @endif
                 </div>
             </div>
         @empty
             <div class="col-12">
-                <div class="card border-0 bg-light">
-                    <div class="card-body text-center py-5">
-                        <svg width="64" height="64" fill="currentColor" class="text-muted mb-3">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
-                        </svg>
-                        <h5 class="fw-semibold mb-2">
-                            @if(request('search') || request('status'))
-                                Tidak Ada Hasil
-                            @else
-                                Belum Ada Laporan
-                            @endif
-                        </h5>
-                        <p class="text-muted mb-4">
-                            @if(request('search') || request('status'))
-                                Tidak ada laporan yang sesuai dengan pencarian Anda. Coba gunakan kata kunci lain.
-                            @else
-                                Anda belum membuat laporan apapun. Mulai buat laporan pertama Anda sekarang!
-                            @endif
-                        </p>
+                <div class="empty-state">
+                    <div class="empty-icon">
                         @if(request('search') || request('status'))
-                            <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-primary me-2">
-                                <svg width="16" height="16" fill="currentColor" class="me-1">
-                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                                </svg>
-                                Reset Filter
+                            <i class="fas fa-search"></i>
+                        @else
+                            <i class="far fa-folder-open"></i>
+                        @endif
+                    </div>
+                    <h4 class="fw-bold mb-3 text-dark">
+                        @if(request('search') || request('status'))
+                            Tidak Ada Hasil Pencarian
+                        @else
+                            Belum Ada Laporan
+                        @endif
+                    </h4>
+                    <p class="text-muted mb-4 lead">
+                        @if(request('search') || request('status'))
+                            Coba ubah kata kunci atau hapus filter untuk melihat semua laporan.
+                        @else
+                            Mulai buat laporan pertama kamu untuk membantu meningkatkan lingkungan RW 05!
+                        @endif
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <a href="{{ route('warga.laporan.create') }}" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-plus-circle me-2"></i> Buat Laporan Baru
+                        </a>
+                        @if(request('search') || request('status'))
+                            <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-redo me-2"></i> Reset Filter
                             </a>
                         @endif
-                        <a href="{{ route('warga.laporan.create') }}" class="btn btn-primary">
-                            <svg width="18" height="18" fill="currentColor" class="me-2" style="vertical-align: text-bottom;">
-                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                            </svg>
-                            Buat Laporan Baru
-                        </a>
                     </div>
                 </div>
             </div>
@@ -260,112 +511,48 @@
 
     <!-- Pagination -->
     @if($laporan->hasPages())
-        <div class="mt-4 d-flex justify-content-center">
-            {{ $laporan->appends(request()->query())->links() }}
+        <div class="d-flex justify-content-center mt-5">
+            {{ $laporan->appends(request()->query())->links('pagination::bootstrap-5') }}
         </div>
     @endif
 
 </div>
 
-<!-- Modal Konfirmasi Hapus - DIPINDAH KE LUAR LOOP -->
+<!-- Delete Modals -->
 @foreach($laporan as $item)
     @if($item->status == 'menunggu')
         <div class="modal fade" id="deleteModal{{ $item->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $item->id }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
-                    <!-- Header dengan gradient -->
-                    <div class="modal-header border-0 text-white" style="background: linear-gradient(135deg, #EF476F 0%, #D83A5D 100%); padding: 1.5rem;">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="bg-white bg-opacity-25 rounded-circle p-3">
-                                <svg width="32" height="32" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h5 class="modal-title fw-bold mb-0" id="deleteModalLabel{{ $item->id }}">Konfirmasi Hapus</h5>
-                                <small class="opacity-75">Tindakan ini tidak dapat dibatalkan</small>
-                            </div>
-                        </div>
+                <div class="modal-content rounded-4 border-0 shadow-lg">
+                    <div class="modal-header bg-danger text-white border-0 rounded-top-4">
+                        <h5 class="modal-title fw-bold">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Konfirmasi Hapus
+                        </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    
-                    <!-- Body -->
-                    <div class="modal-body p-4">
-                        <div class="text-center mb-4">
-                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex p-4 mb-3">
-                                <svg width="48" height="48" fill="currentColor" class="text-danger">
-                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                </svg>
-                            </div>
-                            <h5 class="fw-bold mb-2">Yakin ingin menghapus?</h5>
-                            <p class="text-muted mb-0">
-                                Laporan "<strong>{{ Str::limit($item->judul, 50) }}</strong>" akan dihapus secara permanen.
-                            </p>
+                    <div class="modal-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-trash-alt text-danger" style="font-size: 4rem; opacity: 0.3;"></i>
                         </div>
-
-                        <!-- Info Laporan -->
-                        <div class="bg-light rounded-3 p-3 mb-3">
-                            <div class="row g-2 small">
-                                <div class="col-6">
-                                    <span class="text-muted">ID Laporan:</span>
-                                    <div class="fw-semibold">#{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}</div>
-                                </div>
-                                <div class="col-6">
-                                    <span class="text-muted">Status:</span>
-                                    <div>
-                                        <span class="badge badge-sm 
-                                            @if($item->status == 'menunggu') bg-warning
-                                            @elseif($item->status == 'diproses') bg-info
-                                            @else bg-success
-                                            @endif
-                                        ">
-                                            {{ ucfirst($item->status) }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <span class="text-muted">Dibuat:</span>
-                                    <div class="fw-semibold">{{ $item->created_at->format('d M Y, H:i') }}</div>
-                                </div>
-                            </div>
+                        <h5 class="fw-bold mb-3">Yakin hapus laporan ini?</h5>
+                        <div class="alert alert-light border mb-3">
+                            <strong class="d-block text-start">{{ Str::limit($item->judul, 80) }}</strong>
                         </div>
-
-                        <div class="alert alert-warning border-0 mb-0" style="background: rgba(255, 210, 63, 0.1);">
-                            <div class="d-flex gap-2">
-                                <svg width="20" height="20" fill="currentColor" class="text-warning flex-shrink-0 mt-1">
-                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                                </svg>
-                                <small class="text-dark">
-                                    <strong>Perhatian:</strong> Data yang sudah dihapus tidak dapat dikembalikan.
-                                </small>
-                            </div>
-                        </div>
+                        <p class="small text-danger fw-semibold mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Tindakan ini permanen dan tidak bisa dibatalkan
+                        </p>
                     </div>
-                    
-                    <!-- Footer -->
-                    <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" 
-                                class="btn btn-light px-4" 
-                                data-bs-dismiss="modal"
-                                style="border-radius: 10px;">
-                            <svg width="16" height="16" fill="currentColor" class="me-1">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                            </svg>
-                            Batal
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i> Batal
                         </button>
-                        
-                        <form action="{{ route('warga.laporan.destroy', $item->id) }}" 
-                              method="POST" 
-                              class="d-inline">
-                            @csrf
+                        <form action="{{ route('warga.laporan.destroy', $item->id) }}" method="POST" class="d-inline">
+                            @csrf 
                             @method('DELETE')
-                            <button type="submit" 
-                                    class="btn btn-danger px-4"
-                                    style="border-radius: 10px; background: linear-gradient(135deg, #EF476F 0%, #D83A5D 100%); border: none;">
-                                <svg width="16" height="16" fill="currentColor" class="me-1">
-                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                </svg>
-                                Ya, Hapus
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="fas fa-trash-alt me-1"></i> Ya, Hapus
                             </button>
                         </form>
                     </div>
@@ -374,111 +561,4 @@
         </div>
     @endif
 @endforeach
-
-<style>
-.hover-lift {
-    transition: all 0.3s ease;
-}
-
-.hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
-}
-
-.card {
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.btn {
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.badge {
-    font-weight: 500;
-    font-size: 0.75rem;
-}
-
-.status-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-
-.form-select, .form-control {
-    border-radius: 8px;
-    border-color: #dee2e6;
-}
-
-.input-group-text {
-    border-radius: 8px 0 0 8px;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-}
-
-.btn-outline-primary:hover,
-.btn-outline-secondary:hover,
-.btn-outline-danger:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-    border: none;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-}
-
-/* Modal Animation */
-.modal.fade .modal-dialog {
-    transition: transform 0.3s ease-out;
-}
-
-.modal.show .modal-dialog {
-    transform: none;
-}
-
-/* Pagination Style */
-.pagination {
-    gap: 0.25rem;
-}
-
-.page-link {
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    color: #0d6efd;
-    margin: 0 2px;
-}
-
-.page-link:hover {
-    background-color: #e7f1ff;
-    border-color: #0d6efd;
-}
-
-.page-item.active .page-link {
-    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-    border-color: #0d6efd;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .hover-lift:hover {
-        transform: none;
-    }
-    
-    .btn {
-        font-size: 0.875rem;
-    }
-}
-</style>
 @endsection

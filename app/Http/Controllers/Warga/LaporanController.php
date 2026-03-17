@@ -17,8 +17,10 @@ class LaporanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Laporan::where('user_id', Auth::id());
+        // Query utama dengan eager loading fotos
+        $query = Laporan::with('fotos')->where('user_id', Auth::id());
         
+        // Filter pencarian
         if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
@@ -27,15 +29,37 @@ class LaporanController extends Controller
             });
         }
         
+        // Filter status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
         
         $query->orderBy('created_at', 'desc');
         
+        // Pagination
         $laporan = $query->paginate(9)->withQueryString();
 
-        return view('warga.laporan.index', compact('laporan'));
+        // Hitung statistik SEBELUM pagination (menggunakan query terpisah)
+        $statsQuery = Laporan::where('user_id', Auth::id());
+        
+        // Terapkan filter pencarian pada stats juga jika ada
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $statsQuery->where(function($q) use ($searchTerm) {
+                $q->where('judul', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('isi', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        $stats = [
+            'total' => $statsQuery->count(),
+            'menunggu' => (clone $statsQuery)->where('status', 'menunggu')->count(),
+            'diproses' => (clone $statsQuery)->where('status', 'diproses')->count(),
+            'selesai' => (clone $statsQuery)->where('status', 'selesai')->count(),
+            'ditolak' => (clone $statsQuery)->where('status', 'ditolak')->count(),
+        ];
+
+        return view('warga.laporan.index', compact('laporan', 'stats'));
     }
 
     /**
@@ -119,13 +143,19 @@ class LaporanController extends Controller
     /**
      * Form edit laporan
      */
-    public function edit($id)
+    public function edit(Laporan $laporan)
     {
-        $laporan = Laporan::with('fotos')
-                    ->where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->where('status', 'menunggu')
-                    ->firstOrFail();
+        // Cek ownership & status
+        if ($laporan->user_id !== auth()->id()) {
+            abort(403, 'Ini bukan laporan Anda.');
+        }
+
+        if ($laporan->status !== 'menunggu') {
+            abort(403, 'Laporan ini tidak bisa diedit lagi.');
+        }
+
+        // Eager load fotos
+        $laporan->load('fotos');
 
         return view('warga.laporan.edit', compact('laporan'));
     }
@@ -224,7 +254,7 @@ class LaporanController extends Controller
                 Storage::disk('public')->delete($foto->foto_path);
             }
 
-            // Hapus foto lama jika ada
+            // Hapus foto lama jika ada (backward compatibility)
             if ($laporan->foto) {
                 Storage::disk('public')->delete($laporan->foto);
             }
@@ -274,6 +304,7 @@ class LaporanController extends Controller
         
         $laporan = $query->paginate(9)->withQueryString();
         
+        // Hitung statistik terpisah
         $total = Laporan::count();
         $menunggu = Laporan::where('status', 'menunggu')->count();
         $diproses = Laporan::where('status', 'diproses')->count();
@@ -298,37 +329,46 @@ class LaporanController extends Controller
         return view('warga.laporan.detail_umum', compact('laporan'));
     }
 
+    /**
+     * Tampilkan riwayat laporan yang diarsipkan
+     */
     public function riwayat()
-{
-    $laporan = Laporan::where('user_id', Auth::id())
-                ->archived()
-                ->latest('archived_at')
-                ->paginate(10);
+    {
+        $laporan = Laporan::where('user_id', Auth::id())
+                    ->archived()
+                    ->latest('archived_at')
+                    ->paginate(10);
 
-    return view('warga.laporan.riwayat', compact('laporan'));
-}
+        return view('warga.laporan.riwayat', compact('laporan'));
+    }
 
-public function archive($id)
-{
-    $laporan = Laporan::where('id', $id)
-                ->where('user_id', Auth::id())
-                ->firstOrFail();
+    /**
+     * Arsipkan laporan yang sudah selesai
+     */
+    public function archive($id)
+    {
+        $laporan = Laporan::where('id', $id)
+                    ->where('user_id', Auth::id())
+                    ->firstOrFail();
 
-    $laporan->archive();
+        $laporan->archive();
 
-    return redirect()->route('warga.laporan.index')
-        ->with('success', 'Laporan berhasil diarsipkan.');
-}
+        return redirect()->route('warga.laporan.index')
+            ->with('success', 'Laporan berhasil diarsipkan.');
+    }
 
-public function unarchive($id)
-{
-    $laporan = Laporan::where('id', $id)
-                ->where('user_id', Auth::id())
-                ->firstOrFail();
+    /**
+     * Kembalikan laporan dari arsip
+     */
+    public function unarchive($id)
+    {
+        $laporan = Laporan::where('id', $id)
+                    ->where('user_id', Auth::id())
+                    ->firstOrFail();
 
-    $laporan->unarchive();
+        $laporan->unarchive();
 
-    return redirect()->route('warga.laporan.riwayat')
-        ->with('success', 'Laporan berhasil dikembalikan dari arsip.');
-}
+        return redirect()->route('warga.laporan.riwayat')
+            ->with('success', 'Laporan berhasil dikembalikan dari arsip.');
+    }
 }

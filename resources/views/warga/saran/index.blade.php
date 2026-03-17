@@ -1,95 +1,239 @@
-@extends('layouts.app')
+@extends('layouts.user')
+
+@section('title', 'Saran Saya - Lapor Aja!')
+
+@push('styles')
+<style>
+    :root {
+        --primary: #4fc3f7;
+        --primary-dark: #0288d1;
+        --primary-soft: #81d4fa;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-bg: rgba(255, 255, 255, 0.78);
+        --shadow-soft: 0 8px 32px rgba(79, 195, 247, 0.12);
+        --shadow-hover: 0 12px 40px rgba(79, 195, 247, 0.22);
+        --radius-lg: 20px;
+        --radius-md: 16px;
+    }
+
+    .saran-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem 5rem;
+    }
+
+    .header-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 2.5rem;
+        gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .header-section {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stats-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .stats-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin: 0 auto 1rem;
+    }
+
+    .stats-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text-dark);
+    }
+
+    .stats-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .saran-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .saran-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .status-menunggu { background: rgba(249, 115, 22, 0.9); }
+    .status-dibaca    { background: rgba(59, 130, 246, 0.9); }
+    .status-ditinjau  { background: rgba(111, 66, 193, 0.9); }
+    .status-diterapkan{ background: rgba(34, 197, 94, 0.9); }
+    .status-ditolak   { background: rgba(239, 68, 68, 0.9); }
+
+    .saran-preview {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .meta-info {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .tanggapan-preview {
+        background: rgba(34, 197, 94, 0.08);
+        border-radius: 10px;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+        color: #166534;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 6rem 2rem;
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 2px dashed rgba(129, 212, 250, 0.3);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        color: #cbd5e1;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-create {
+        background: var(--primary);
+        border: none;
+        border-radius: 12px;
+        padding: 0.85rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-create:hover {
+        background: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .stats-value { font-size: 1.8rem; }
+    }
+</style>
+@endpush
 
 @section('content')
-<div class="container-fluid py-4">
-    
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="saran-container">
+
+    <!-- Header -->
+    <div class="header-section">
         <div>
-            <h2 class="fw-bold mb-1" style="color: var(--secondary-color);">Saran Saya</h2>
-            <p class="text-muted mb-0">Kelola dan pantau saran yang telah Anda kirimkan</p>
+            <h2 class="fw-bold mb-1" style="color: var(--primary-dark);">Saran Saya</h2>
+            <p class="text-muted mb-0">Kelola dan pantau semua saran yang kamu kirimkan ke RW</p>
         </div>
-        <a href="{{ route('warga.saran.create') }}" class="btn btn-primary btn-lg" style="border-radius: 12px;">
-            <i class="fas fa-plus-circle me-2"></i>
-            Buat Saran Baru
+        <a href="{{ route('warga.saran.create') }}" class="btn btn-create shadow">
+            <i class="fas fa-plus-circle me-2"></i> Buat Saran Baru
         </a>
     </div>
 
     <!-- Success Alert -->
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
-            <div class="d-flex align-items-center gap-2">
-                <i class="fas fa-check-circle"></i>
-                <span>{{ session('success') }}</span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert alert-success d-flex align-items-center gap-3 mb-4 rounded-3 shadow-sm">
+            <i class="fas fa-check-circle fa-lg"></i>
+            {{ session('success') }}
         </div>
     @endif
 
-    <!-- Statistics Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="border-left: 4px solid #0d6efd; border-radius: 12px;">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted small mb-1">Total Saran</p>
-                            <h3 class="fw-bold mb-0">{{ $saran->total() }}</h3>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
-                            <i class="fas fa-lightbulb text-primary fa-lg"></i>
-                        </div>
-                    </div>
-                </div>
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-icon" style="background: rgba(79, 195, 247, 0.15); color: var(--primary);">
+                <i class="fas fa-lightbulb"></i>
             </div>
+            <div class="stats-value">{{ $saran->total() }}</div>
+            <div class="stats-label">Total Saran</div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="border-left: 4px solid #ffc107; border-radius: 12px;">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted small mb-1">Menunggu</p>
-                            <h3 class="fw-bold mb-0 text-warning">{{ $saran->where('status', 'menunggu')->count() }}</h3>
-                        </div>
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
-                            <i class="fas fa-clock text-warning fa-lg"></i>
-                        </div>
-                    </div>
-                </div>
+        <div class="stats-card">
+            <div class="stats-icon" style="background: rgba(249, 115, 22, 0.15); color: #f97316;">
+                <i class="fas fa-clock"></i>
             </div>
+            <div class="stats-value text-warning">{{ $saran->where('status', 'menunggu')->count() }}</div>
+            <div class="stats-label">Menunggu</div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="border-left: 4px solid #198754; border-radius: 12px;">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted small mb-1">Diterapkan</p>
-                            <h3 class="fw-bold mb-0 text-success">{{ $saran->where('status', 'diterapkan')->count() }}</h3>
-                        </div>
-                        <div class="bg-success bg-opacity-10 p-3 rounded-circle">
-                            <i class="fas fa-check-circle text-success fa-lg"></i>
-                        </div>
-                    </div>
-                </div>
+        <div class="stats-card">
+            <div class="stats-icon" style="background: rgba(34, 197, 94, 0.15); color: #22c55e;">
+                <i class="fas fa-check-circle"></i>
             </div>
+            <div class="stats-value text-success">{{ $saran->where('status', 'diterapkan')->count() }}</div>
+            <div class="stats-label">Diterapkan</div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm" style="border-left: 4px solid #dc3545; border-radius: 12px;">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="text-muted small mb-1">Ditolak</p>
-                            <h3 class="fw-bold mb-0 text-danger">{{ $saran->where('status', 'ditolak')->count() }}</h3>
-                        </div>
-                        <div class="bg-danger bg-opacity-10 p-3 rounded-circle">
-                            <i class="fas fa-times-circle text-danger fa-lg"></i>
-                        </div>
-                    </div>
-                </div>
+        <div class="stats-card">
+            <div class="stats-icon" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">
+                <i class="fas fa-times-circle"></i>
             </div>
+            <div class="stats-value text-danger">{{ $saran->where('status', 'ditolak')->count() }}</div>
+            <div class="stats-label">Ditolak</div>
         </div>
     </div>
 
@@ -98,87 +242,60 @@
         <div class="row g-4">
             @foreach($saran as $item)
                 <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm h-100 hover-card" style="border-radius: 16px; transition: all 0.3s ease;">
+                    <div class="saran-card">
                         <div class="card-body p-4">
-                            <!-- Status Badge -->
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <span class="badge px-3 py-2
-                                    @if($item->status == 'menunggu') bg-warning
-                                    @elseif($item->status == 'dibaca') bg-info
-                                    @elseif($item->status == 'ditinjau') bg-purple
-                                    @elseif($item->status == 'diterapkan') bg-success
-                                    @else bg-danger
-                                    @endif">
+                                <span class="status-badge status-{{ $item->status }}">
                                     {{ ucfirst($item->status) }}
                                 </span>
-                                
+
                                 @if($item->tanggapan_admin)
-                                    <span class="badge bg-success bg-opacity-10 text-success">
-                                        <i class="fas fa-reply me-1"></i> Ada Tanggapan
+                                    <span class="badge bg-success bg-opacity-75 text-white px-3 py-1">
+                                        <i class="fas fa-reply me-1"></i> Ditanggapi
                                     </span>
                                 @endif
                             </div>
 
-                            <!-- Title -->
-                            <h5 class="fw-bold mb-2">{{ Str::limit($item->judul, 50) }}</h5>
+                            <h5 class="fw-bold mb-2">{{ Str::limit($item->judul, 55) }}</h5>
 
-                            <!-- Content Preview -->
-                            <p class="text-muted small mb-3" style="height: 60px; overflow: hidden;">
-                                {{ Str::limit($item->isi, 100) }}
+                            <p class="saran-preview">
+                                {{ Str::limit($item->isi, 110) }}
                             </p>
 
-                            <!-- Meta Info -->
-                            <div class="d-flex align-items-center gap-3 mb-3 text-muted small">
-                                <div>
-                                    <i class="fas fa-calendar me-1"></i>
-                                    {{ $item->created_at->format('d M Y') }}
-                                </div>
-                                <div>
-                                    <i class="fas fa-clock me-1"></i>
-                                    {{ $item->created_at->diffForHumans() }}
-                                </div>
+                            <div class="meta-info d-flex gap-4 mb-3">
+                                <span><i class="fas fa-calendar-alt me-1"></i>{{ $item->created_at->format('d M Y') }}</span>
+                                <span><i class="fas fa-clock me-1"></i>{{ $item->created_at->diffForHumans() }}</span>
                             </div>
 
-                            <!-- Tanggapan Preview -->
                             @if($item->tanggapan_admin)
-                                <div class="alert alert-success border-0 mb-3 p-2" style="background: rgba(25, 135, 84, 0.1);">
-                                    <small class="text-success fw-semibold">
-                                        <i class="fas fa-comment-dots me-1"></i>
-                                        Admin telah menanggapi saran Anda
-                                    </small>
+                                <div class="tanggapan-preview">
+                                    <strong>Tanggapan Admin:</strong><br>
+                                    {{ Str::limit($item->tanggapan_admin, 80) }}
                                 </div>
                             @endif
 
-                            <!-- Action Buttons -->
-                            <div class="d-flex gap-2">
+                            <div class="d-flex gap-2 mt-3">
                                 <a href="{{ route('warga.saran.show', $item->id) }}" 
-                                   class="btn btn-primary btn-sm flex-grow-1" 
-                                   style="border-radius: 8px;">
+                                   class="btn btn-primary btn-sm flex-fill rounded-pill">
                                     <i class="fas fa-eye me-1"></i> Detail
                                 </a>
-                                
+
                                 @if(!$item->tanggapan_admin)
                                     <a href="{{ route('warga.saran.edit', $item->id) }}" 
-                                       class="btn btn-outline-warning btn-sm" 
-                                       style="border-radius: 8px;">
+                                       class="btn btn-outline-secondary btn-sm rounded-pill">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    
-                                    <form action="{{ route('warga.saran.destroy', $item->id) }}" 
-                                          method="POST" 
-                                          class="d-inline"
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus saran ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="btn btn-outline-danger btn-sm" 
-                                                style="border-radius: 8px;">
-                                            <i class="fas fa-trash"></i>
+
+                                    <form action="{{ route('warga.saran.destroy', $item->id) }}" method="POST" class="d-inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill"
+                                                onclick="return confirm('Yakin hapus saran ini?')">
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </form>
                                 @else
-                                    <span class="badge bg-secondary align-self-center px-2">
-                                        <i class="fas fa-lock me-1"></i> Ditanggapi
+                                    <span class="badge bg-secondary align-self-center px-3 py-2">
+                                        <i class="fas fa-lock me-1"></i> Terkunci
                                     </span>
                                 @endif
                             </div>
@@ -189,47 +306,25 @@
         </div>
 
         <!-- Pagination -->
-        <div class="mt-4">
-            {{ $saran->links() }}
+        <div class="d-flex justify-content-center mt-5">
+            {{ $saran->appends(request()->query())->links('pagination::bootstrap-5') }}
         </div>
     @else
         <!-- Empty State -->
-        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-            <div class="card-body text-center py-5">
-                <div class="mb-4">
-                    <i class="fas fa-lightbulb fa-4x text-muted"></i>
-                </div>
-                <h5 class="fw-bold mb-2">Belum Ada Saran</h5>
-                <p class="text-muted mb-4">Anda belum pernah mengirimkan saran. Mulai berikan ide atau masukan Anda!</p>
-                <a href="{{ route('warga.saran.create') }}" class="btn btn-primary btn-lg" style="border-radius: 12px;">
-                    <i class="fas fa-plus-circle me-2"></i>
-                    Buat Saran Pertama
-                </a>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="far fa-lightbulb"></i>
             </div>
+            <h4 class="fw-bold mb-3">Belum Ada Saran</h4>
+            <p class="text-muted mb-4 lead">
+                Kamu belum pernah mengirimkan saran atau ide untuk RW 05.<br>
+                Yuk, bagikan pemikiranmu sekarang!
+            </p>
+            <a href="{{ route('warga.saran.create') }}" class="btn btn-create btn-lg shadow">
+                <i class="fas fa-plus-circle me-2"></i> Buat Saran Pertama
+            </a>
         </div>
     @endif
+
 </div>
-
-<style>
-.hover-card {
-    transition: all 0.3s ease;
-}
-
-.hover-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-}
-
-.bg-purple {
-    background-color: #6f42c1 !important;
-}
-
-.btn {
-    transition: all 0.2s ease;
-}
-
-.btn:hover {
-    transform: translateY(-1px);
-}
-</style>
 @endsection

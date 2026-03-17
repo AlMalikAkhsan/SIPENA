@@ -3,29 +3,75 @@
 namespace App\Http\Controllers\Warga;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use App\Models\Laporan;
-use App\Models\User;
 
 class DashBoardController extends Controller
 {
     public function warga()
     {
+        // Query utama dengan eager loading fotos
+        $query = Laporan::with('fotos')->where('user_id', Auth::id());
         $userId = auth()->id();
 
-        $total = Laporan::where('user_id', $userId)->count();
+        $total    = Laporan::where('user_id', $userId)->count();
         $menunggu = Laporan::where('user_id', $userId)->where('status', 'menunggu')->count();
         $diproses = Laporan::where('user_id', $userId)->where('status', 'diproses')->count();
-        $selesai = Laporan::where('user_id', $userId)->where('status', 'selesai')->count();
+        $selesai  = Laporan::where('user_id', $userId)->where('status', 'selesai')->count();
+        $ditolak  = Laporan::where('user_id', $userId)->where('status', 'ditolak')->count();
 
-        $latest = Laporan::where('user_id', $userId)->latest()->take(3)->get();
+        $latest   = Laporan::where('user_id', $userId)->latest()->take(3)->get();
+        $laporan  = Laporan::where('user_id', $userId)->latest()->paginate(9);
 
         return view('warga.dashboard', compact(
-            'total', 'menunggu', 'diproses', 'selesai', 'latest'
+            'total',
+            'menunggu',
+            'diproses',
+            'selesai',
+            'ditolak',
+            'latest',
+            'laporan',
         ));
+    }
+
+    /**
+     * Menampilkan semua laporan dari semua warga dengan filter
+     */
+    public function semua(Request $request)
+    {
+        // Query builder untuk laporan
+        $query = Laporan::with(['user', 'fotos']);
+        
+        // Filter berdasarkan pencarian (judul atau isi)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('isi', 'like', '%' . $search . '%');
+            });
+        }
+        
+        // Filter berdasarkan status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        // Sorting (default: terbaru)
+        $sort = $request->get('sort', 'terbaru');
+        if ($sort === 'terlama') {
+            $query->oldest();
+        } else {
+            $query->latest();
+        }
+        
+        // Paginate dengan append query parameters
+        $laporan = $query->paginate(12)->withQueryString();
+        
+        return view('warga.laporan.semua', compact('laporan'));
     }
 
     // Menampilkan halaman profile (read-only)
@@ -45,12 +91,12 @@ class DashBoardController extends Controller
     {
         $user = auth()->user();
 
-        // Validasi data
+        // Validasi data dengan field yang sesuai database
         $validatedData = $request->validate([
             // Personal Info
             'name' => 'required|string|max:255',
             'username' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 'regex:/^\S*$/',  // tidak boleh ada spasi
@@ -64,7 +110,6 @@ class DashBoardController extends Controller
             ],
             'tanggal_lahir' => 'nullable|date|before:today',
             'gender' => 'nullable|in:Laki-laki,Perempuan',
-            'bio' => 'nullable|string|max:500',
             
             // Contact Info
             'email' => [
@@ -75,8 +120,6 @@ class DashBoardController extends Controller
             ],
             'no_hp' => 'nullable|string|max:20',
             'alamat' => 'nullable|string|max:500',
-            'city' => 'nullable|string|max:100',
-            'postal_code' => 'nullable|string|max:10',
             'rt' => 'nullable|string|max:10',
             'rw' => 'nullable|string|max:10',
             
@@ -91,7 +134,7 @@ class DashBoardController extends Controller
         // Handle avatar upload
         if ($request->hasFile('avatar')) {
             // Hapus avatar lama jika ada
-            if ($user->avatar) {
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                 Storage::disk('public')->delete($user->avatar);
             }
             
@@ -104,15 +147,18 @@ class DashBoardController extends Controller
         if ($request->filled('current_password')) {
             // Verifikasi password lama
             if (!Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai.'])->withInput();
+                return back()
+                    ->withErrors(['current_password' => 'Password saat ini tidak sesuai.'])
+                    ->withInput();
             }
             
             // Update password baru
             $validatedData['password'] = Hash::make($request->new_password);
-        }
-
-        // Hapus field password dari validatedData jika tidak diisi
-        if (!$request->filled('current_password')) {
+            
+            // Hapus field password dari input
+            unset($validatedData['current_password'], $validatedData['new_password']);
+        } else {
+            // Hapus field password jika tidak diisi
             unset($validatedData['current_password'], $validatedData['new_password']);
         }
 

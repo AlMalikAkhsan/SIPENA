@@ -782,7 +782,6 @@
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 600;
-    backdrop-filter: blur(10px);
 }
 
 .status-indicator {
@@ -799,26 +798,26 @@
 }
 
 .status-menunggu {
-    background: rgba(255, 193, 7, 0.2);
+    background: rgb(255, 191, 0);
     color: #fff;
     border: 2px solid rgba(255, 193, 7, 0.4);
 }
 
 .status-diproses {
-    background: rgba(13, 202, 240, 0.2);
+    background: rgb(0, 213, 255)
     color: #fff;
     border: 2px solid rgba(13, 202, 240, 0.4);
 }
 
 .status-selesai {
-    background: rgba(25, 135, 84, 0.2);
+    background: rgb(0, 255, 136);
     color: #fff;
     border: 2px solid rgba(25, 135, 84, 0.4);
 }
 
 .status-ditolak {
-    background: rgba(220, 53, 69, 0.2);
-    color: #fff;
+    background: rgb(255, 0, 0);
+    color: #ffffff;
     border: 2px solid rgba(220, 53, 69, 0.4);
 }
 

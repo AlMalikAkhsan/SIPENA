@@ -1,183 +1,284 @@
-@extends('layouts.app')
+@extends('layouts.user')
+
+@section('title', 'Buat Laporan Baru - Lapor Aja!')
+
+@push('styles')
+<style>
+    :root {
+        --primary: #4fc3f7;
+        --primary-dark: #0288d1;
+        --primary-soft: #81d4fa;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --card-bg: rgba(255, 255, 255, 0.78);
+        --shadow-soft: 0 8px 32px rgba(79, 195, 247, 0.12);
+        --shadow-hover: 0 12px 40px rgba(79, 195, 247, 0.22);
+        --radius-lg: 20px;
+        --radius-md: 16px;
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(129, 212, 250, 0.25);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        border: 1px solid rgba(129, 212, 250, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.15);
+    }
+
+    .upload-area {
+        border: 2px dashed rgba(129, 212, 250, 0.5);
+        border-radius: 16px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(227, 242, 253, 0.3);
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+        border-color: var(--primary);
+        background: rgba(187, 222, 251, 0.4);
+        box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.1);
+    }
+
+    .preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .preview-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        aspect-ratio: 1 / 1;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .remove-btn:hover {
+        background: #ef4444;
+        transform: scale(1.1);
+    }
+
+    .info-card, .tips-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(129, 212, 250, 0.2);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .tips-list li {
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+    }
+
+    .tips-list li i {
+        color: var(--primary);
+        margin-right: 8px;
+    }
+
+    .btn-submit {
+        background: var(--primary);
+        border: none;
+        border-radius: 12px;
+        padding: 0.85rem 2.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(79, 195, 247, 0.35);
+    }
+
+    @media (max-width: 992px) {
+        .preview-container {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="container-fluid py-4">
-    
+
     <!-- Page Header -->
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('warga.laporan.index') }}" class="btn btn-light me-3" style="border-radius: 12px;">
+    <div class="d-flex align-items-center mb-4 gap-3">
+        <a href="{{ route('warga.laporan.index') }}" class="btn btn-light rounded-circle shadow-sm p-2" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
             <i class="fas fa-arrow-left"></i>
         </a>
         <div>
-            <h2 class="fw-bold mb-1" style="color: var(--secondary-color);">Buat Laporan Baru</h2>
-            <p class="text-muted mb-0">Laporkan keluhan atau aspirasi Anda kepada pemerintah</p>
+            <h2 class="fw-bold mb-1" style="color: var(--primary-dark);">Buat Laporan Baru</h2>
+            <p class="text-muted mb-0">Laporkan keluhan, kerusakan, atau aspirasi untuk RW 05</p>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row g-4">
+        <!-- Main Form -->
         <div class="col-lg-8">
-            <!-- Form Card -->
-            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-                <div class="card-body p-4">
-                    <form action="{{ route('warga.laporan.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+            <div class="form-card p-4 p-md-5">
+                <form action="{{ route('warga.laporan.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
 
-                        <!-- Judul Laporan -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">
-                                <i class="fas fa-heading text-primary me-2"></i>
-                                Judul Laporan <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" 
-                                   name="judul" 
-                                   class="form-control form-control-lg @error('judul') is-invalid @enderror" 
-                                   placeholder="Contoh: Jalan Rusak di Depan Pasar"
-                                   value="{{ old('judul') }}"
-                                   required
-                                   style="border-radius: 12px; border: 2px solid #e9ecef;">
-                            @error('judul')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Berikan judul yang jelas dan singkat</small>
-                        </div>
+                    <!-- Judul -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-heading text-primary me-2"></i>Judul Laporan <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" name="judul" class="form-control form-control-lg @error('judul') is-invalid @enderror"
+                               placeholder="Contoh: Lampu Jalan Mati di Gang Mawar" value="{{ old('judul') }}" required>
+                        @error('judul') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <small class="text-muted d-block mt-1">Buat judul yang jelas dan langsung ke intinya</small>
+                    </div>
 
-                        <!-- Isi Laporan -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">
-                                <i class="fas fa-align-left text-primary me-2"></i>
-                                Detail Laporan <span class="text-danger">*</span>
-                            </label>
-                            <textarea name="isi" 
-                                      class="form-control @error('isi') is-invalid @enderror" 
-                                      rows="6" 
-                                      placeholder="Jelaskan detail laporan Anda secara lengkap..."
-                                      required
-                                      style="border-radius: 12px; border: 2px solid #e9ecef;">{{ old('isi') }}</textarea>
-                            @error('isi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Minimal 20 karakter. Jelaskan masalah dengan detail.</small>
-                        </div>
+                    <!-- Isi / Deskripsi -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-align-left text-primary me-2"></i>Detail Laporan <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="isi" rows="6" class="form-control @error('isi') is-invalid @enderror"
+                                  placeholder="Jelaskan apa yang terjadi, kapan, di mana, dan dampaknya..." required>{{ old('isi') }}</textarea>
+                        @error('isi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <small class="text-muted d-block mt-1">Minimal 20 karakter. Semakin detail semakin cepat ditangani</small>
+                    </div>
 
-                        <!-- Upload Multiple Foto -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">
-                                <i class="fas fa-camera text-primary me-2"></i>
-                                Foto Pendukung <span class="text-muted">(Opsional, Max 5 foto)</span>
-                            </label>
-                            
-                            <div class="upload-area" id="uploadArea" style="border: 2px dashed #dee2e6; border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s ease;">
-                                <input type="file" 
-                                       name="fotos[]" 
-                                       id="fotoInput" 
-                                       class="d-none" 
-                                       accept="image/*"
-                                       multiple
-                                       onchange="handleFiles(this.files)">
-                                
-                                <div id="uploadPlaceholder">
-                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                    <p class="mb-2 fw-semibold">Klik atau drag & drop untuk upload foto</p>
-                                    <small class="text-muted">Anda bisa upload hingga 5 foto sekaligus</small>
-                                    <p class="text-muted small mt-2 mb-0">Format: JPG, PNG, JPEG (Max: 5MB per foto)</p>
-                                </div>
+                    <!-- Foto Upload -->
+                    <div class="mb-5">
+                        <label class="form-label">
+                            <i class="fas fa-images text-primary me-2"></i>Foto Pendukung <span class="text-muted">(Maksimal 5 foto)</span>
+                        </label>
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" name="fotos[]" id="fotoInput" class="d-none" accept="image/*" multiple>
+                            <div id="uploadPlaceholder">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                <p class="fw-semibold mb-1">Klik atau tarik foto ke sini</p>
+                                <small class="text-muted">JPG, PNG • Maks 5MB per foto • Hingga 5 foto</small>
                             </div>
-
-                            <!-- Preview Container -->
-                            <div id="previewContainer" class="row g-3 mt-3" style="display: none;"></div>
-
-                            @error('fotos.*')
-                                <div class="text-danger small mt-2">{{ $message }}</div>
-                            @enderror
                         </div>
 
-                        <!-- Lokasi -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold mb-2">
-                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                Lokasi Kejadian <span class="text-muted">(Opsional)</span>
-                            </label>
-                            <input type="text" 
-                                   name="lokasi" 
-                                   class="form-control @error('lokasi') is-invalid @enderror" 
-                                   placeholder="Contoh: Jl. Sudirman No. 123, Jakarta Pusat"
-                                   value="{{ old('lokasi') }}"
-                                   style="border-radius: 12px; border: 2px solid #e9ecef;">
-                            @error('lokasi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <small class="text-muted">Sebutkan lokasi spesifik kejadian</small>
-                        </div>
+                        <div id="previewContainer" class="preview-container"></div>
 
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-3 mt-4 pt-3 border-top">
-                            <button type="submit" class="btn btn-primary btn-lg px-5" style="border-radius: 12px; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); border: none;">
-                                <i class="fas fa-paper-plane me-2"></i>
-                                Kirim Laporan
-                            </button>
-                            <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-secondary btn-lg px-4" style="border-radius: 12px;">
-                                <i class="fas fa-times me-2"></i>
-                                Batal
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                        @error('fotos.*')
+                            <div class="text-danger small mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Lokasi -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Lokasi Kejadian <span class="text-muted">(Opsional)</span>
+                        </label>
+                        <input type="text" name="lokasi" class="form-control @error('lokasi') is-invalid @enderror"
+                               placeholder="Contoh: RT 03 / Gang Melati No. 45, RW 05" value="{{ old('lokasi') }}">
+                        @error('lokasi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <small class="text-muted d-block mt-1">Sebutkan RT/RW atau patokan terdekat agar lebih mudah ditemukan</small>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="d-flex flex-column flex-sm-row gap-3 mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg flex-fill btn-submit">
+                            <i class="fas fa-paper-plane me-2"></i>Kirim Laporan
+                        </button>
+                        <a href="{{ route('warga.laporan.index') }}" class="btn btn-outline-secondary btn-lg flex-fill">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <!-- Sidebar Info -->
+        <!-- Sidebar Tips & Info -->
         <div class="col-lg-4">
-            <!-- Tips Card -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body p-4 text-white">
-                    <h5 class="fw-bold mb-3">
-                        <i class="fas fa-lightbulb me-2"></i>
-                        Tips Membuat Laporan
-                    </h5>
-                    <ul class="mb-0 ps-3">
-                        <li class="mb-2">Gunakan judul yang jelas dan ringkas</li>
-                        <li class="mb-2">Jelaskan kronologi secara detail</li>
-                        <li class="mb-2">Lampirkan foto dari berbagai sudut</li>
-                        <li class="mb-2">Upload hingga 5 foto pendukung</li>
-                        <li class="mb-2">Cantumkan lokasi yang spesifik</li>
-                        <li class="mb-0">Gunakan bahasa yang sopan</li>
-                    </ul>
-                </div>
+            <!-- Tips -->
+            <div class="tips-card p-4 mb-4">
+                <h5 class="fw-bold mb-3" style="color: var(--primary-dark);">
+                    <i class="fas fa-lightbulb me-2 text-warning"></i>Tips Membuat Laporan Efektif
+                </h5>
+                <ul class="tips-list list-unstyled mb-0">
+                    <li><i class="fas fa-check-circle"></i>Judul singkat tapi deskriptif</li>
+                    <li><i class="fas fa-check-circle"></i>Jelaskan masalah + kronologi secara runtut</li>
+                    <li><i class="fas fa-check-circle"></i>Lampirkan foto dari beberapa sudut</li>
+                    <li><i class="fas fa-check-circle"></i>Maksimal 5 foto, ukuran < 5MB/foto</li>
+                    <li><i class="fas fa-check-circle"></i>Tulis lokasi sejelas mungkin (RT, gang, patokan)</li>
+                    <li><i class="fas fa-check-circle"></i>Gunakan bahasa sopan & faktual</li>
+                </ul>
             </div>
 
-            <!-- Status Info -->
-            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-                <div class="card-body p-4">
-                    <h6 class="fw-bold mb-3">
-                        <i class="fas fa-info-circle text-info me-2"></i>
-                        Informasi Penting
-                    </h6>
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="bg-warning bg-opacity-10 p-2 rounded-3 me-3">
-                            <i class="fas fa-clock text-warning"></i>
-                        </div>
-                        <div>
-                            <small class="fw-semibold d-block">Waktu Proses</small>
-                            <small class="text-muted">1-3 hari kerja</small>
-                        </div>
+            <!-- Informasi Penting -->
+            <div class="info-card p-4">
+                <h6 class="fw-bold mb-3" style="color: var(--primary-dark);">
+                    <i class="fas fa-info-circle me-2 text-info"></i>Informasi Penting
+                </h6>
+                <div class="d-flex align-items-start mb-3">
+                    <div class="bg-info bg-opacity-10 p-2 rounded me-3">
+                        <i class="fas fa-clock text-info"></i>
                     </div>
-                    <div class="d-flex align-items-start mb-3">
-                        <div class="bg-info bg-opacity-10 p-2 rounded-3 me-3">
-                            <i class="fas fa-bell text-info"></i>
-                        </div>
-                        <div>
-                            <small class="fw-semibold d-block">Notifikasi</small>
-                            <small class="text-muted">Anda akan mendapat update via email</small>
-                        </div>
+                    <div>
+                        <div class="fw-semibold small">Waktu Penanganan</div>
+                        <small class="text-muted">Biasanya 1–3 hari kerja</small>
                     </div>
-                    <div class="d-flex align-items-start">
-                        <div class="bg-success bg-opacity-10 p-2 rounded-3 me-3">
-                            <i class="fas fa-check-circle text-success"></i>
-                        </div>
-                        <div>
-                            <small class="fw-semibold d-block">Transparansi</small>
-                            <small class="text-muted">Laporan dapat dilihat publik</small>
-                        </div>
+                </div>
+                <div class="d-flex align-items-start mb-3">
+                    <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                        <i class="fas fa-bell text-primary"></i>
+                    </div>
+                    <div>
+                        <div class="fw-semibold small">Notifikasi</div>
+                        <small class="text-muted">Update status via email & dashboard</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start">
+                    <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                        <i class="fas fa-shield-alt text-success"></i>
+                    </div>
+                    <div>
+                        <div class="fw-semibold small">Privasi & Transparansi</div>
+                        <small class="text-muted">Data pribadi aman, laporan bisa dilihat publik (tanpa identitas)</small>
                     </div>
                 </div>
             </div>
@@ -185,179 +286,89 @@
     </div>
 </div>
 
-<style>
-.upload-area:hover {
-    border-color: var(--primary-color) !important;
-    background: rgba(255, 107, 53, 0.02);
-}
-
-.form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.15);
-}
-
-.btn-primary {
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
-}
-
-.card {
-    transition: all 0.3s ease;
-}
-
-.preview-item {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    height: 200px;
-}
-
-.preview-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.preview-item .remove-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(220, 53, 69, 0.9);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.preview-item .remove-btn:hover {
-    background: #dc3545;
-    transform: scale(1.1);
-}
-
-.preview-item .file-number {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
-</style>
-
 <script>
 let selectedFiles = [];
 const maxFiles = 5;
-
-// Upload Area Click
-document.getElementById('uploadArea').addEventListener('click', function() {
-    document.getElementById('fotoInput').click();
-});
-
-// Drag and Drop
 const uploadArea = document.getElementById('uploadArea');
+const fotoInput = document.getElementById('fotoInput');
+const previewContainer = document.getElementById('previewContainer');
+const uploadPlaceholder = document.getElementById('uploadPlaceholder');
 
-uploadArea.addEventListener('dragover', function(e) {
+// Click to upload
+uploadArea.addEventListener('click', () => fotoInput.click());
+
+// Drag & Drop
+uploadArea.addEventListener('dragover', e => {
     e.preventDefault();
-    uploadArea.style.borderColor = 'var(--primary-color)';
-    uploadArea.style.background = 'rgba(255, 107, 53, 0.05)';
+    uploadArea.classList.add('dragover');
+});
+uploadArea.addEventListener('dragleave', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+});
+uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
 });
 
-uploadArea.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    uploadArea.style.borderColor = '#dee2e6';
-    uploadArea.style.background = 'transparent';
-});
+// Handle files
+fotoInput.addEventListener('change', e => handleFiles(e.target.files));
 
-uploadArea.addEventListener('drop', function(e) {
-    e.preventDefault();
-    uploadArea.style.borderColor = '#dee2e6';
-    uploadArea.style.background = 'transparent';
-    
-    const files = e.dataTransfer.files;
-    handleFiles(files);
-});
-
-// Handle Multiple Files
 function handleFiles(files) {
     if (selectedFiles.length + files.length > maxFiles) {
-        alert(`Maksimal ${maxFiles} foto. Anda sudah memilih ${selectedFiles.length} foto.`);
+        alert(`Maksimal ${maxFiles} foto. Sudah ada ${selectedFiles.length} foto.`);
         return;
     }
 
-    for (let file of files) {
+    Array.from(files).forEach(file => {
         if (file.type.startsWith('image/')) {
             selectedFiles.push(file);
         }
-    }
+    });
 
     updateFileInput();
-    displayPreviews();
+    renderPreviews();
 }
 
-// Update File Input
 function updateFileInput() {
-    const dataTransfer = new DataTransfer();
-    selectedFiles.forEach(file => {
-        dataTransfer.items.add(file);
-    });
-    document.getElementById('fotoInput').files = dataTransfer.files;
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    fotoInput.files = dt.files;
 }
 
-// Display Previews
-function displayPreviews() {
-    const container = document.getElementById('previewContainer');
-    const placeholder = document.getElementById('uploadPlaceholder');
-    
+function renderPreviews() {
+    previewContainer.innerHTML = '';
     if (selectedFiles.length === 0) {
-        container.style.display = 'none';
-        placeholder.style.display = 'block';
+        previewContainer.style.display = 'none';
+        uploadPlaceholder.style.display = 'block';
         return;
     }
 
-    container.style.display = 'flex';
-    placeholder.style.display = 'none';
-    container.innerHTML = '';
+    previewContainer.style.display = 'grid';
+    uploadPlaceholder.style.display = 'none';
 
     selectedFiles.forEach((file, index) => {
-        const col = document.createElement('div');
-        col.className = 'col-md-4 col-sm-6';
-        
         const reader = new FileReader();
-        reader.onload = function(e) {
-            col.innerHTML = `
-                <div class="preview-item">
-                    <img src="${e.target.result}" alt="Preview ${index + 1}">
-                    <button type="button" class="remove-btn" onclick="removeFile(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <span class="file-number">Foto ${index + 1}</span>
-                </div>
+        reader.onload = e => {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            div.innerHTML = `
+                <img src="${e.target.result}" alt="Preview ${index + 1}">
+                <button type="button" class="remove-btn" onclick="removeFile(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
             `;
+            previewContainer.appendChild(div);
         };
         reader.readAsDataURL(file);
-        
-        container.appendChild(col);
     });
 }
 
-// Remove File
 function removeFile(index) {
     selectedFiles.splice(index, 1);
     updateFileInput();
-    displayPreviews();
+    renderPreviews();
 }
 </script>
 @endsection

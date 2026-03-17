@@ -86,4 +86,5 @@ class Laporan extends Model
         $this->archived_at = null;
         $this->save();
     }
+
 }

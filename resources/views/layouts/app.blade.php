@@ -448,6 +448,8 @@
             background: var(--primary-dark);
             color: white;
         }
+
+        
     </style>
 </head>
 <body>
@@ -559,6 +561,10 @@
             <a href="{{ route('admin.saran.index') }}" class="nav-link {{ request()->is('admin/saran*') ? 'active' : '' }}">
                 <i class="fas fa-lightbulb"></i>
                 <span>Saran User</span>
+            </a>
+            <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i>
+                <span>Manajemen User</span>
             </a>
         </nav>
     </div>

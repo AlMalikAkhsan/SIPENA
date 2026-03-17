@@ -1,18 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.user')
 
 @section('content')
 <div class="profile-container">
     <div class="profile-header">
         <div class="breadcrumb">
-            <a href="{{ route('dashboard') }}">Dashboard</a>
+            <a href="{{ route('warga.dashboard') }}">Dashboard</a>
             <span>/</span>
-            <!-- Ganti dari route('warga.profile.update') menjadi route('warga.profile.edit') -->
-            <a href="{{ route('warga.profile.edit') }}" class="btn btn-primary btn-block">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.8463 2.6543C15.6273 1.87325 16.8983 1.87325 17.6793 2.6543C18.4604 3.43535 18.4604 4.70635 17.6793 5.4874L6.41422 16.7525L2.5 17.5L3.24752 13.5858L14.5126 2.32076L14.8463 2.6543Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Edit Profile
-            </a>
+            <a href="{{ route('warga.profile') }}">Profile</a>
+            <span>/</span>
+            <span>Edit</span>
         </div>
         <h1>Edit Profile</h1>
         <p class="subtitle">Perbarui informasi profile Anda di bawah ini</p>
@@ -144,53 +140,55 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="birth_date" class="form-label">Tanggal Lahir</label>
+                            <label for="nik" class="form-label">NIK</label>
                             <input 
-                                type="date" 
-                                id="birth_date" 
-                                name="birth_date" 
-                                class="form-control @error('birth_date') is-invalid @enderror" 
-                                value="{{ old('birth_date', Auth::user()->birth_date) }}"
+                                type="text" 
+                                id="nik" 
+                                name="nik" 
+                                class="form-control @error('nik') is-invalid @enderror" 
+                                value="{{ old('nik', Auth::user()->nik) }}"
+                                placeholder="Masukkan NIK (16 digit)"
+                                maxlength="16"
                             >
-                            @error('birth_date')
+                            <small class="form-text">Nomor Induk Kependudukan (16 digit)</small>
+                            @error('nik')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="gender" class="form-label">Jenis Kelamin</label>
-                            <select 
-                                id="gender" 
-                                name="gender" 
-                                class="form-control @error('gender') is-invalid @enderror"
+                            <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                            <input 
+                                type="date" 
+                                id="tanggal_lahir" 
+                                name="tanggal_lahir" 
+                                class="form-control @error('tanggal_lahir') is-invalid @enderror" 
+                                value="{{ old('tanggal_lahir', Auth::user()->tanggal_lahir) }}"
                             >
-                                <option value="">Pilih jenis kelamin</option>
-                                <option value="pria" {{ old('gender', Auth::user()->gender) == 'pria' ? 'selected' : '' }}>Pria</option>
-                                <option value="wanita" {{ old('gender', Auth::user()->gender) == 'wanita' ? 'selected' : '' }}>Wanita</option>
-                            </select>
-                            @error('gender')
+                            @error('tanggal_lahir')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="bio" class="form-label">Bio</label>
-                        <textarea 
-                            id="bio" 
-                            name="bio" 
-                            class="form-control @error('bio') is-invalid @enderror" 
-                            rows="4"
-                            placeholder="Ceritakan tentang diri Anda..."
-                        >{{ old('bio', Auth::user()->bio) }}</textarea>
-                        <small class="form-text">Maksimal 500 karakter</small>
-                        @error('bio')
+                        <label for="gender" class="form-label">Jenis Kelamin</label>
+                        <select 
+                            id="gender" 
+                            name="gender" 
+                            class="form-control @error('gender') is-invalid @enderror"
+                        >
+                            <option value="">Pilih jenis kelamin</option>
+                            <option value="Laki-laki" {{ old('gender', Auth::user()->gender) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ old('gender', Auth::user()->gender) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                        @error('gender')
                             <span class="error-text">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
-                <!-- Informasi Kontak -->
+                <!-- Informasi Kontak & Wilayah -->
                 <div class="form-section">
                     <div class="section-header">
                         <div class="section-icon">
@@ -199,7 +197,7 @@
                                 <path d="M2 6L10 11L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <h3>Informasi Kontak</h3>
+                        <h3>Informasi Kontak & Wilayah</h3>
                     </div>
 
                     <div class="form-row">
@@ -222,62 +220,62 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="phone" class="form-label">Nomor Telepon</label>
+                            <label for="no_hp" class="form-label">Nomor HP</label>
                             <input 
                                 type="tel" 
-                                id="phone" 
-                                name="phone" 
-                                class="form-control @error('phone') is-invalid @enderror" 
-                                value="{{ old('phone', Auth::user()->phone) }}"
+                                id="no_hp" 
+                                name="no_hp" 
+                                class="form-control @error('no_hp') is-invalid @enderror" 
+                                value="{{ old('no_hp', Auth::user()->no_hp) }}"
                                 placeholder="+62 812-3456-7890"
                             >
-                            @error('phone')
+                            @error('no_hp')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="address" class="form-label">Alamat</label>
+                        <label for="alamat" class="form-label">Alamat</label>
                         <textarea 
-                            id="address" 
-                            name="address" 
-                            class="form-control @error('address') is-invalid @enderror" 
+                            id="alamat" 
+                            name="alamat" 
+                            class="form-control @error('alamat') is-invalid @enderror" 
                             rows="3"
                             placeholder="Masukkan alamat lengkap"
-                        >{{ old('address', Auth::user()->address) }}</textarea>
-                        @error('address')
+                        >{{ old('alamat', Auth::user()->alamat) }}</textarea>
+                        @error('alamat')
                             <span class="error-text">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="city" class="form-label">Kota</label>
+                            <label for="rt" class="form-label">RT</label>
                             <input 
                                 type="text" 
-                                id="city" 
-                                name="city" 
-                                class="form-control @error('city') is-invalid @enderror" 
-                                value="{{ old('city', Auth::user()->city) }}"
-                                placeholder="Masukkan nama kota"
+                                id="rt" 
+                                name="rt" 
+                                class="form-control @error('rt') is-invalid @enderror" 
+                                value="{{ old('rt', Auth::user()->rt) }}"
+                                placeholder="001"
                             >
-                            @error('city')
+                            @error('rt')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="postal_code" class="form-label">Kode Pos</label>
+                            <label for="rw" class="form-label">RW</label>
                             <input 
                                 type="text" 
-                                id="postal_code" 
-                                name="postal_code" 
-                                class="form-control @error('postal_code') is-invalid @enderror" 
-                                value="{{ old('postal_code', Auth::user()->postal_code) }}"
-                                placeholder="12345"
+                                id="rw" 
+                                name="rw" 
+                                class="form-control @error('rw') is-invalid @enderror" 
+                                value="{{ old('rw', Auth::user()->rw) }}"
+                                placeholder="001"
                             >
-                            @error('postal_code')
+                            @error('rw')
                                 <span class="error-text">{{ $message }}</span>
                             @enderror
                         </div>
@@ -347,7 +345,7 @@
 
                 <!-- Action Buttons -->
                 <div class="form-actions">
-                    <a href="{{ route('warga.profile.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('warga.profile') }}" class="btn btn-secondary">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 10H5M5 10L10 15M5 10L10 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
@@ -402,6 +400,10 @@
 .breadcrumb a {
     color: var(--accent);
     text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--primary);
 }
 
 .breadcrumb span {
