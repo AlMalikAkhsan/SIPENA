@@ -46,19 +46,30 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email:rfc,dns|unique:users|max:255',
+            'password' => 'required|min:8|confirmed',
+        ], [
+            'email.email'    => 'Email tidak valid atau domain tidak aktif. Gunakan email asli.',
+            'email.unique'   => 'Email ini sudah terdaftar.',
+            'password.min'   => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => 'warga',
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'role'     => 'warga',
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/login')->with('success', 'Akun berhasil dibuat, silakan login.');
+        // ← WAJIB: login dulu sebelum redirect ke verify
+        Auth::login($user);
+        
+        $user->sendEmailVerificationNotification();
+
+        return redirect()->route('verification.notice')
+            ->with('message', 'Akun berhasil dibuat! Cek email kamu.');
     }
 
     public function logout(Request $request)

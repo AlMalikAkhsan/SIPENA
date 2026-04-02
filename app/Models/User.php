@@ -18,11 +18,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'nik',
+        'tanggal_lahir',
+        'gender',
         'no_hp',
         'alamat',
         'rt',
         'rw',
-        'role'
+        'role',
     ];
 
     // Warga → banyak laporan

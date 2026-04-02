@@ -7,13 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Laporan;
 use App\Models\Tanggapan;
 use App\Models\Notification;
+use App\Mail\LaporanDitolakMail; // ← tambah
+use Illuminate\Support\Facades\Mail; // ← tambah
 use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
-    /**
-     * Tampilkan semua laporan dengan filter dan search
-     */
     public function index(Request $request)
     {
         $query = Laporan::with('user');
@@ -40,18 +39,12 @@ class LaporanController extends Controller
         return view('admin.laporan.index', compact('laporan'));
     }
 
-    /**
-     * Detail laporan
-     */
     public function show($id)
     {
         $laporan = Laporan::with(['user', 'tanggapans.user'])->findOrFail($id);
         return view('admin.laporan.show', compact('laporan'));
     }
 
-    /**
-     * Update status laporan + notifikasi
-     */
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -72,9 +65,6 @@ class LaporanController extends Controller
         return back()->with('success', 'Status laporan berhasil diperbarui.');
     }
 
-    /**
-     * Tolak laporan + alasan + notifikasi
-     */
     public function reject(Request $request, $id)
     {
         $request->validate([
@@ -83,17 +73,21 @@ class LaporanController extends Controller
 
         DB::beginTransaction();
         try {
-            $laporan = Laporan::findOrFail($id);
+            // ✅ Pastikan user di-load dengan with('user')
+            $laporan = Laporan::with('user')->findOrFail($id);
 
             $laporan->update([
-                'status' => 'ditolak',
+                'status'           => 'ditolak',
                 'alasan_penolakan' => $request->alasan_penolakan
             ]);
 
+            // ✅ refresh() agar alasan_penolakan terbaca dari DB
+            $laporan->refresh();
+
             Tanggapan::create([
                 'laporan_id' => $laporan->id,
-                'user_id' => auth()->id(),
-                'isi' => "⚠️ LAPORAN DITOLAK\n\n{$request->alasan_penolakan}"
+                'user_id'    => auth()->id(),
+                'isi'        => "⚠️ LAPORAN DITOLAK\n\n{$request->alasan_penolakan}"
             ]);
 
             Notification::create([
@@ -104,19 +98,23 @@ class LaporanController extends Controller
                 'link'    => route('warga.laporan.show', $laporan->id),
             ]);
 
+            // ✅ Kirim email penolakan
+            if ($laporan->user?->email) {
+                Mail::to($laporan->user->email)
+                    ->send(new LaporanDitolakMail($laporan));
+            }
+
             DB::commit();
+
             return redirect()->route('admin.laporan.show', $id)
-                ->with('success', 'Laporan ditolak dan notifikasi terkirim.');
+                ->with('success', 'Laporan ditolak dan email notifikasi terkirim ke user.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menolak laporan.');
+            return back()->with('error', 'Gagal menolak laporan: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Hapus laporan
-     */
     public function destroy($id)
     {
         $laporan = Laporan::findOrFail($id);

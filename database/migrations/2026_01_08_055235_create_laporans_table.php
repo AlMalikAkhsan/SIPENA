@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('judul');
             $table->text('isi');
-            $table->string('foto')->nullable()->change();
+            $table->string('foto')->nullable();
             $table->string('lokasi')->nullable();
             $table->enum('status', ['menunggu', 'diproses', 'selesai', 'ditolak'])->default('menunggu');
             $table->timestamps();
