@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 //user
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/laporan', [LaporanController::class, 'store']);
-    Route::get('/laporan', [LaporanController::class, 'index']);
     Route::get('/laporan/{id}', [LaporanController::class, 'show']);
     Route::post('/laporan/{id}', [LaporanController::class, 'update']);
 });
+    Route::get('/laporan', [LaporanController::class, 'index']);
