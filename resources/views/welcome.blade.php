@@ -480,7 +480,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-5 mb-lg-0">
                     <h1 class="hero-title fade-in">
-                        Sistem Pelaporan<br>
+                        Sistem Pelaporan & Saran<br>
                         <span class="highlight">Warga Digital</span>
                     </h1>
                     <p class="hero-subtitle fade-in">
