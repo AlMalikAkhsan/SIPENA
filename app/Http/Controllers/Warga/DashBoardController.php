@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use App\Models\Laporan;
 
-class DashBoardController extends Controller
+class DashboardController extends Controller
 {
     public function warga()
     {

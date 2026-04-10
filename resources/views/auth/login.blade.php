@@ -3,307 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LaporAja!</title>
+    <title>Masuk - SiPena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --primary: #4fc3f7;
-            --primary-dark: #0288d1;
-            --primary-soft: #81d4fa;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.2);
+            --brand: #0f6cbd;
+            --ink: #0f172a;
+            --muted: #62748d;
+            --line: rgba(148, 163, 184, 0.22);
+            --brand-soft: #e5f2ff;
         }
+
+        * { box-sizing: border-box; }
 
         body {
+            margin: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #81d4fa 0%, #4fc3f7 100%);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: var(--text-dark);
-            position: relative;
-            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 0% 0%, rgba(20, 184, 166, 0.14), transparent 26%),
+                radial-gradient(circle at 100% 10%, rgba(15, 108, 189, 0.18), transparent 28%),
+                linear-gradient(180deg, #edf6ff 0%, #f8fbff 45%, #ffffff 100%);
         }
 
-        body::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.18;
-            pointer-events: none;
-        }
-
-        .login-wrapper {
+        .auth-shell {
             min-height: 100vh;
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(320px, 0.95fr) minmax(340px, 0.85fr);
+        }
+
+        .auth-side, .auth-panel { padding: 2rem; }
+        .auth-side, .auth-panel { display: flex; align-items: center; }
+        .auth-panel { justify-content: center; }
+        .side-card { max-width: 38rem; }
+
+        .back-link, .badge-top {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 460px;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(129, 212, 250, 0.15);
-        }
-
-        .login-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            padding: 3rem 2rem 2rem;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-
-        .logo-circle {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            backdrop-filter: blur(8px);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-        }
-
-        .logo-circle i {
-            font-size: 2.5rem;
-        }
-
-        .login-title {
-            font-size: 2rem;
+            gap: 0.6rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
         }
 
-        .login-subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
+        .back-link { color: var(--brand); margin-bottom: 2rem; }
+
+        .badge-top {
+            padding: 0.6rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(15, 108, 189, 0.12);
+            color: var(--brand);
+            font-size: 0.9rem;
         }
 
-        .login-body {
-            padding: 2.5rem 2rem 2rem;
+        h1 {
+            margin: 1.2rem 0 1rem;
+            font-size: clamp(2.3rem, 4vw, 4.2rem);
+            line-height: 1.08;
+            letter-spacing: -0.04em;
         }
 
-        .form-floating > label {
-            color: var(--text-muted);
+        h1 span { color: var(--brand); }
+
+        .lead-text, .feature-item p, .card-inner > p, .helper-row {
+            color: var(--muted);
+            line-height: 1.85;
         }
+
+        .feature-stack {
+            display: grid;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1rem 1.1rem;
+            background: rgba(255, 255, 255, 0.74);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 1.2rem;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+        }
+
+        .feature-icon, .logo-mark {
+            display: grid;
+            place-items: center;
+            color: var(--brand);
+            background: var(--brand-soft);
+        }
+
+        .feature-icon {
+            width: 2.9rem;
+            height: 2.9rem;
+            border-radius: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .feature-item strong { display: block; margin-bottom: 0.35rem; font-size: 1rem; }
+
+        .auth-card {
+            width: 100%;
+            max-width: 31rem;
+            padding: 1.25rem;
+            border-radius: 2rem;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.09);
+            backdrop-filter: blur(18px);
+        }
+
+        .card-inner {
+            border-radius: 1.55rem;
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            padding: 2rem;
+        }
+
+        .logo-mark {
+            width: 3.2rem;
+            height: 3.2rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            color: white;
+            background: linear-gradient(135deg, var(--brand), #39a0e4);
+        }
+
+        .card-inner h2 {
+            margin-bottom: 0.55rem;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .form-label { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.55rem; }
 
         .form-control {
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            padding: 1rem 1.25rem;
-            height: calc(3.5rem + 2px);
-            transition: all 0.3s ease;
+            height: 3.35rem;
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            padding: 0.9rem 1rem;
+            box-shadow: none;
         }
 
         .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.15);
+            border-color: rgba(15, 108, 189, 0.45);
+            box-shadow: 0 0 0 0.25rem rgba(15, 108, 189, 0.08);
         }
 
-        .btn-login {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 0.85rem;
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: white;
-            transition: all 0.3s ease;
+        .btn-main, .btn-google {
             width: 100%;
+            height: 3.45rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            transition: 0.25s ease;
         }
 
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(79, 195, 247, 0.4);
+        .btn-main {
+            border: none;
+            color: white;
+            background: linear-gradient(135deg, var(--brand), #2b8ad2);
+            box-shadow: 0 18px 30px rgba(15, 108, 189, 0.2);
         }
 
         .btn-google {
-            background: white;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            padding: 0.85rem;
-            font-weight: 600;
-            color: #333;
-            transition: all 0.3s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-
-        .btn-google:hover {
-            background: #f8fafc;
-            border-color: var(--primary-soft);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            background: #fff;
+            color: var(--ink);
+            border: 1px solid var(--line);
         }
 
         .divider {
             display: flex;
             align-items: center;
-            text-align: center;
-            margin: 2rem 0;
-            color: var(--text-muted);
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #d1d5db;
-        }
-
-        .divider span {
-            padding: 0 1.5rem;
+            gap: 1rem;
+            color: var(--muted);
             font-size: 0.9rem;
+            margin: 1.2rem 0;
         }
 
-        .register-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--text-muted);
-            font-size: 0.95rem;
+        .divider::before, .divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--line);
         }
 
-        .register-link a {
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
+        .alert-custom {
+            margin-bottom: 1rem;
+            padding: 0.95rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid #fecdd3;
+            background: #fff1f2;
+            color: #be123c;
+            font-size: 0.92rem;
         }
 
-        .register-link a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
+        .helper-row { margin-top: 1.25rem; text-align: center; font-size: 0.94rem; }
+        .helper-row a { color: var(--brand); font-weight: 700; }
+
+        @media (max-width: 991px) {
+            .auth-shell { grid-template-columns: 1fr; }
+            .auth-side { padding-bottom: 0; }
         }
 
-        .back-home {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            z-index: 10;
-        }
-
-        .btn-back {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 0.6rem 1.5rem;
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-back:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateX(-4px);
-        }
-
-        @media (max-width: 576px) {
-            .login-body { padding: 2rem 1.5rem; }
-            .login-header { padding: 2.5rem 1.5rem 1.5rem; }
-            .back-home { top: 1rem; left: 1rem; }
+        @media (max-width: 575px) {
+            .auth-side, .auth-panel { padding: 1rem; }
+            .card-inner { padding: 1.4rem; }
         }
     </style>
 </head>
 <body>
+    <div class="auth-shell">
+        <section class="auth-side">
+            <div class="side-card">
+                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i>Kembali ke beranda</a>
+                <div class="badge-top"><i class="fas fa-city"></i>Akses layanan warga</div>
+                <h1>Masuk ke <span>SiPena</span> untuk memantau laporan dengan lebih rapi.</h1>
+                <p class="lead-text">Tampilan dibuat lebih modern dan nyaman di ponsel agar warga bisa mengakses pengaduan, saran, dan progres penanganan tanpa kebingungan.</p>
 
-    <a href="/" class="back-home btn-back">
-        <i class="fas fa-home"></i> Beranda
-    </a>
-
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="logo-circle">
-                    <i class="fas fa-bullhorn"></i>
+                <div class="feature-stack">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <div><strong>Akses cepat</strong><p>Masuk dengan email aktif dan lanjutkan aktivitas layanan warga dari perangkat apa pun.</p></div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-list-check"></i></div>
+                        <div><strong>Status mudah dipahami</strong><p>Riwayat dan progres laporan tampil lebih jelas sehingga tindak lanjut lebih mudah diikuti.</p></div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fas fa-mobile-screen-button"></i></div>
+                        <div><strong>Responsif di mobile</strong><p>Komponen penting tetap nyaman dipakai di layar kecil seperti pengalaman aplikasi layanan modern.</p></div>
+                    </div>
                 </div>
-                <h1 class="login-title">Selamat Datang</h1>
-                <p class="login-subtitle">Masuk ke akun LaporAja! Anda</p>
             </div>
+        </section>
 
-            <div class="login-body">
+        <section class="auth-panel">
+            <div class="auth-card">
+                <div class="card-inner">
+                    <div class="logo-mark"><i class="fas fa-bullhorn"></i></div>
+                    <h2>Masuk ke akun Anda</h2>
+                    <p>Gunakan akun terdaftar untuk membuka dashboard warga atau admin.</p>
 
-                <!-- Pesan Error -->
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong><i class="fas fa-exclamation-circle me-2"></i> Ada kesalahan:</strong>
-                        <ul class="mb-0 mt-2 ps-4">
+                    @if ($errors->any())
+                        <div class="alert-custom">
                             @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                                <div>{{ $error }}</div>
                             @endforeach
-                        </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-
-                <!-- Pesan Sukses -->
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong><i class="fas fa-check-circle me-2"></i> Berhasil!</strong> {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <div class="form-floating mb-4">
-                        <input type="email" name="email" class="form-control" id="email" placeholder="nama@email.com" value="{{ old('email') }}" required autofocus>
-                        <label for="email">Email</label>
-                    </div>
-
-                    <div class="form-floating mb-4">
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
-                        <label for="password">Password</label>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                            <label class="form-check-label small" for="remember">Ingat saya</label>
                         </div>
-                        <a href="#" class="small text-primary text-decoration-none">Lupa password?</a>
-                    </div>
+                    @endif
 
-                    <button type="submit" class="btn btn-login mb-4">
-                        <i class="fas fa-sign-in-alt me-2"></i> Masuk
-                    </button>
+                    @if (session('message'))
+                        <div class="alert alert-success rounded-4 border-0 mb-3">{{ session('message') }}</div>
+                    @endif
 
-                    <div class="divider">
-                        <span>atau masuk dengan</span>
-                    </div>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" placeholder="nama@email.com" required autofocus>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan password" required>
+                        </div>
+                        <button type="submit" class="btn-main"><i class="fas fa-arrow-right-to-bracket"></i>Masuk</button>
+                    </form>
 
-                    <a href="/auth/google" class="btn btn-google">
-                        <img src="https://www.google.com/favicon.ico" alt="Google" width="20" height="20">
-                        Google
-                    </a>
-
-                    <div class="register-link mt-4">
-                        Belum punya akun? 
-                        <a href="register" class="fw-semibold">Daftar sekarang</a>
-                    </div>
-                </form>
+                    <div class="divider">atau</div>
+                    <a href="{{ route('google.redirect') }}" class="btn-google"><i class="fab fa-google"></i>Lanjutkan dengan Google</a>
+                    <div class="helper-row">Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a></div>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

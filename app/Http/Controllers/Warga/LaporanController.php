@@ -225,6 +225,14 @@ class LaporanController extends Controller
 
             DB::commit();
 
+            $returnUrl = $request->input('return');
+            if (is_string($returnUrl) && ($returnUrl !== '') && (str_starts_with($returnUrl, url('/')) || str_starts_with($returnUrl, '/'))) {
+                $targetUrl = str_starts_with($returnUrl, '/') ? url($returnUrl) : $returnUrl;
+
+                return redirect($targetUrl)
+                    ->with('success', 'Laporan berhasil diperbarui.');
+            }
+
             return redirect()->route('warga.laporan.index')
                 ->with('success', 'Laporan berhasil diperbarui.');
                 

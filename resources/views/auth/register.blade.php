@@ -3,282 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - LaporAja!</title>
+    <title>Daftar - SiPena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --primary: #4fc3f7;
-            --primary-dark: #0288d1;
-            --primary-soft: #81d4fa;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.2);
+            --brand: #0f6cbd;
+            --ink: #0f172a;
+            --muted: #62748d;
+            --line: rgba(148, 163, 184, 0.22);
         }
+
+        * { box-sizing: border-box; }
 
         body {
+            margin: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #81d4fa 0%, #4fc3f7 100%);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: var(--text-dark);
-            position: relative;
-            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(20, 184, 166, 0.14), transparent 24%),
+                radial-gradient(circle at 92% 10%, rgba(15, 108, 189, 0.18), transparent 30%),
+                linear-gradient(180deg, #eef7ff 0%, #f8fbff 50%, #ffffff 100%);
         }
 
-        body::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.18;
-            pointer-events: none;
+        .register-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(330px, 0.95fr) minmax(340px, 0.9fr);
         }
 
-        .register-wrapper {
-            min-height: 100vh;
-            display: flex;
+        .register-side, .register-panel { padding: 2rem; }
+        .register-side, .register-panel { display: flex; align-items: center; }
+        .register-panel { justify-content: center; }
+        .side-content { max-width: 39rem; }
+
+        .back-link, .badge-top {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
+            gap: 0.6rem;
+            color: var(--brand);
+            font-weight: 700;
         }
+
+        .back-link { margin-bottom: 2rem; }
+
+        .badge-top {
+            padding: 0.6rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(15, 108, 189, 0.12);
+            font-size: 0.9rem;
+        }
+
+        h1 {
+            margin: 1.2rem 0 1rem;
+            font-size: clamp(2.3rem, 4vw, 4.2rem);
+            line-height: 1.08;
+            letter-spacing: -0.04em;
+        }
+
+        h1 span { color: var(--brand); }
+
+        .lead-text, .info-card p, .card-inner > p, .tips-box, .helper-row {
+            color: var(--muted);
+            line-height: 1.85;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            padding: 1rem 1.05rem;
+            background: rgba(255, 255, 255, 0.76);
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.86);
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+        }
+
+        .info-card i { color: var(--brand); margin-bottom: 0.7rem; font-size: 1.2rem; }
+        .info-card strong { display: block; margin-bottom: 0.35rem; }
 
         .register-card {
             width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(129, 212, 250, 0.15);
+            max-width: 33rem;
+            padding: 1.2rem;
+            border-radius: 2rem;
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.09);
+            backdrop-filter: blur(18px);
         }
 
-        .register-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            padding: 3rem 2rem 2rem;
-            text-align: center;
+        .card-inner {
+            border-radius: 1.55rem;
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            padding: 2rem;
+        }
+
+        .logo-mark {
+            width: 3.2rem;
+            height: 3.2rem;
+            border-radius: 1rem;
+            display: grid;
+            place-items: center;
+            margin-bottom: 1rem;
             color: white;
-            position: relative;
+            background: linear-gradient(135deg, var(--brand), #39a0e4);
         }
 
-        .logo-circle {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            backdrop-filter: blur(8px);
-            border: 2px solid rgba(255, 255, 255, 0.4);
+        .card-inner h2 {
+            margin-bottom: 0.55rem;
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
         }
 
-        .logo-circle i {
-            font-size: 2.5rem;
-        }
-
-        .register-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .register-subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .register-body {
-            padding: 2.5rem 2rem 2rem;
-        }
-
-        .form-floating > label {
-            color: var(--text-muted);
-        }
+        .form-label { font-size: 0.92rem; font-weight: 700; margin-bottom: 0.55rem; }
 
         .form-control {
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            padding: 1rem 1.25rem;
-            height: calc(3.5rem + 2px);
-            transition: all 0.3s ease;
+            height: 3.35rem;
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            padding: 0.9rem 1rem;
+            box-shadow: none;
         }
 
         .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.15);
+            border-color: rgba(15, 108, 189, 0.45);
+            box-shadow: 0 0 0 0.25rem rgba(15, 108, 189, 0.08);
         }
 
-        .form-control.is-invalid {
-            border-color: #ef4444;
+        .tips-box {
+            margin: 1rem 0 1.35rem;
+            padding: 1rem;
+            border-radius: 1rem;
+            background: #f4f9fe;
+            border: 1px solid rgba(15, 108, 189, 0.08);
+            font-size: 0.92rem;
         }
 
-        .btn-register {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 0.85rem;
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: white;
-            transition: all 0.3s ease;
+        .tips-box strong { display: block; color: var(--ink); margin-bottom: 0.35rem; }
+
+        .btn-main {
             width: 100%;
-        }
-
-        .btn-register:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(79, 195, 247, 0.4);
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .login-link a {
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .login-link a:hover {
-            color: var(--primary-dark);
-            text-decoration: underline;
-        }
-
-        .back-home {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            z-index: 10;
-        }
-
-        .btn-back {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 0.6rem 1.5rem;
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
+            height: 3.45rem;
+            border: none;
+            border-radius: 1rem;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
+            justify-content: center;
+            gap: 0.7rem;
+            color: white;
+            background: linear-gradient(135deg, var(--brand), #2b8ad2);
+            box-shadow: 0 18px 30px rgba(15, 108, 189, 0.2);
         }
 
-        .btn-back:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateX(-4px);
+        .alert-custom {
+            margin-bottom: 1rem;
+            padding: 0.95rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid #fecdd3;
+            background: #fff1f2;
+            color: #be123c;
+            font-size: 0.92rem;
         }
 
-        .password-requirements {
-            background: rgba(129, 212, 250, 0.1);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: var(--text-muted);
+        .helper-row { margin-top: 1.25rem; text-align: center; font-size: 0.94rem; }
+        .helper-row a { color: var(--brand); font-weight: 700; }
+
+        @media (max-width: 991px) {
+            .register-shell { grid-template-columns: 1fr; }
+            .register-side { padding-bottom: 0; }
         }
 
-        .password-requirements ul {
-            margin: 0;
-            padding-left: 1.25rem;
+        @media (max-width: 767px) {
+            .info-grid { grid-template-columns: 1fr; }
         }
 
-        .password-requirements li {
-            margin: 0.25rem 0;
-        }
-
-        @media (max-width: 576px) {
-            body { padding: 1rem 0; }
-            .register-body { padding: 2rem 1.5rem; }
-            .register-header { padding: 2.5rem 1.5rem 1.5rem; }
-            .back-home { top: 1rem; left: 1rem; }
+        @media (max-width: 575px) {
+            .register-side, .register-panel { padding: 1rem; }
+            .card-inner { padding: 1.4rem; }
         }
     </style>
 </head>
 <body>
+    <div class="register-shell">
+        <section class="register-side">
+            <div class="side-content">
+                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i>Kembali ke beranda</a>
+                <div class="badge-top"><i class="fas fa-user-plus"></i>Pendaftaran warga</div>
+                <h1>Buat akun <span>SiPena</span> dan mulai sampaikan aspirasi dengan lebih mudah.</h1>
+                <p class="lead-text">Proses daftar dibuat singkat, bersih, dan ramah mobile supaya warga bisa langsung mengakses layanan pengaduan dan saran tanpa hambatan visual yang berlebihan.</p>
 
-    <a href="/" class="back-home btn-back">
-        <i class="fas fa-home"></i> Beranda
-    </a>
-
-    <div class="register-wrapper">
-        <div class="register-card">
-            <div class="register-header">
-                <div class="logo-circle">
-                    <i class="fas fa-bullhorn"></i>
+                <div class="info-grid">
+                    <div class="info-card"><i class="fas fa-envelope-circle-check"></i><strong>Email terverifikasi</strong><p>Gunakan email aktif agar proses verifikasi dan pemberitahuan berjalan lancar.</p></div>
+                    <div class="info-card"><i class="fas fa-file-shield"></i><strong>Akun warga otomatis</strong><p>Setelah daftar, akun akan diarahkan untuk verifikasi lalu siap dipakai sebagai warga.</p></div>
+                    <div class="info-card"><i class="fas fa-pen-ruler"></i><strong>Form lebih rapi</strong><p>Komponen dirancang minimalis agar fokus tetap pada proses pendaftaran.</p></div>
+                    <div class="info-card"><i class="fas fa-mobile-alt"></i><strong>Nyaman di layar kecil</strong><p>Tata letak mengikuti pendekatan responsif agar tetap enak dipakai di ponsel.</p></div>
                 </div>
-                <h1 class="register-title">Buat Akun Baru</h1>
-                <p class="register-subtitle">Daftar untuk mulai melaporkan dan memberi saran</p>
             </div>
+        </section>
 
-            <div class="register-body">
+        <section class="register-panel">
+            <div class="register-card">
+                <div class="card-inner">
+                    <div class="logo-mark"><i class="fas fa-bullhorn"></i></div>
+                    <h2>Buat akun baru</h2>
+                    <p>Lengkapi data berikut untuk mulai menggunakan portal layanan warga.</p>
 
-                <!-- Pesan Error -->
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong><i class="fas fa-exclamation-circle me-2"></i> Ada kesalahan:</strong>
-                        <ul class="mb-0 mt-2 ps-4">
+                    @if ($errors->any())
+                        <div class="alert-custom">
                             @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                                <div>{{ $error }}</div>
                             @endforeach
-                        </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
+                        </div>
+                    @endif
 
-                <form method="POST" action="/register">
-                    @csrf
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nama lengkap</label>
+                            <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required autofocus>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" placeholder="nama@email.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Minimal 8 karakter" required>
+                        </div>
+                        <div class="mb-2">
+                            <label for="password_confirmation" class="form-label">Konfirmasi password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Ulangi password" required>
+                        </div>
 
-                    <div class="form-floating mb-4">
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Nama Lengkap" value="{{ old('name') }}" required autofocus>
-                        <label for="name">Nama Lengkap</label>
-                    </div>
+                        <div class="tips-box">
+                            <strong>Catatan pendaftaran</strong>
+                            Setelah akun dibuat, sistem akan mengirim tautan verifikasi ke email Anda sebelum akses warga digunakan sepenuhnya.
+                        </div>
 
-                    <div class="form-floating mb-4">
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="email" placeholder="nama@email.com" value="{{ old('email') }}" required>
-                        <label for="email">Email</label>
-                    </div>
+                        <button type="submit" class="btn-main"><i class="fas fa-user-check"></i>Daftar Sekarang</button>
+                    </form>
 
-                    <div class="form-floating mb-4">
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="Password" required>
-                        <label for="password">Password</label>
-                    </div>
-
-                    <div class="form-floating mb-4">
-                        <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Konfirmasi Password" required>
-                        <label for="password_confirmation">Konfirmasi Password</label>
-                    </div>
-
-                    <div class="password-requirements">
-                        <strong class="d-block mb-2">Password harus memenuhi:</strong>
-                        <ul>
-                            <li>Minimal 8 karakter</li>
-                            <li>Mengandung huruf besar & kecil (disarankan)</li>
-                            <li>Mengandung angka atau simbol (disarankan)</li>
-                        </ul>
-                    </div>
-
-                    <button type="submit" class="btn btn-register mt-4">
-                        <i class="fas fa-user-plus me-2"></i> Daftar Sekarang
-                    </button>
-                </form>
-
-                <div class="login-link mt-4">
-                    Sudah punya akun? 
-                    <a href="{{ route('login') }}" class="fw-semibold">Masuk di sini</a>
+                    <div class="helper-row">Sudah punya akun? <a href="{{ route('login') }}">Masuk di sini</a></div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
