@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - SiPena</title>
+    <title>Daftar - LaporAja</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -200,9 +200,9 @@
     <div class="register-shell">
         <section class="register-side">
             <div class="side-content">
-                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i>Kembali ke beranda</a>
+                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i>Kembali</a>
                 <div class="badge-top"><i class="fas fa-user-plus"></i>Pendaftaran warga</div>
-                <h1>Buat akun <span>SiPena</span> dan mulai sampaikan aspirasi dengan lebih mudah.</h1>
+                <h1>Buat akun <span>LaporAja</span> dan mulai sampaikan aspirasi dengan lebih mudah.</h1>
                 <p class="lead-text">Proses daftar dibuat singkat, bersih, dan ramah mobile supaya warga bisa langsung mengakses layanan pengaduan dan saran tanpa hambatan visual yang berlebihan.</p>
 
                 <div class="info-grid">

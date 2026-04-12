@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Sipena Warga')</title>
+    <title>@yield('title', 'LaporAja')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -625,7 +625,7 @@
         <div class="brand-box">
             <div class="brand-mark"><i class="fas fa-city"></i></div>
             <p class="page-kicker mb-2">Layanan Warga Digital</p>
-            <h1 class="brand-title">Sipena Warga</h1>
+            <h1 class="brand-title">LaporAja!</h1>
             <p class="mb-0 mt-2">Tampilan warga kini dibuat lebih ringkas, modern, dan mudah dipakai seperti aplikasi layanan publik.</p>
         </div>
 

@@ -2,10 +2,16 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Lapor Aja!</title>
+    <title>LaporAja!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @if(auth()->check() && auth()->user()->role === 'admin')
+        <link rel="stylesheet" href="{{ asset('css/admin-modern.css') }}">
+    @endif
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
@@ -214,7 +220,7 @@
 
         .user-role {
             font-size: 0.7rem;
-            color: var(--text-secondary);
+            color: white;
         }
 
         .dropdown-toggle::after {
@@ -452,7 +458,7 @@
         
     </style>
 </head>
-<body>
+<body class="{{ auth()->check() && auth()->user()->role === 'admin' ? 'admin-layout' : 'user-layout' }}">
 
 <!-- Top Navigation -->
 <nav class="top-navbar">
@@ -464,7 +470,7 @@
             <div class="brand-icon">
                 <i class="fas fa-bullhorn"></i>
             </div>
-            <span>Lapor Aja!</span>
+            <span>LaporAja!</span>
         </a>
     </div>
 
@@ -565,20 +571,6 @@
             <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i>
                 <span>Manajemen User</span>
-            </a>
-        </nav>
-    </div>
-
-    <div class="sidebar-section">
-        <div class="sidebar-title">Lainnya</div>
-        <nav class="nav-menu">
-            <a href="#" class="nav-link">
-                <i class="fas fa-download"></i>
-                <span>Export Data</span>
-            </a>
-            <a href="#" class="nav-link">
-                <i class="fas fa-cog"></i>
-                <span>Pengaturan</span>
             </a>
         </nav>
     </div>

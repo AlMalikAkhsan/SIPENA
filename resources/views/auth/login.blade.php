@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - SiPena</title>
+    <title>Masuk - LaporAja</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -225,9 +225,9 @@
     <div class="auth-shell">
         <section class="auth-side">
             <div class="side-card">
-                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i>Kembali ke beranda</a>
+                <a href="/" class="back-link"><i class="fas fa-arrow-left"></i>Kembali</a>
                 <div class="badge-top"><i class="fas fa-city"></i>Akses layanan warga</div>
-                <h1>Masuk ke <span>SiPena</span> untuk memantau laporan dengan lebih rapi.</h1>
+                <h1>Masuk ke <span>LaporAja</span> untuk memantau laporan dengan lebih rapi.</h1>
                 <p class="lead-text">Tampilan dibuat lebih modern dan nyaman di ponsel agar warga bisa mengakses pengaduan, saran, dan progres penanganan tanpa kebingungan.</p>
 
                 <div class="feature-stack">

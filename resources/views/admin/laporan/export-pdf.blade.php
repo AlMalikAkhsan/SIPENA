@@ -1,324 +1,371 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Warga - {{ date('d F Y') }}</title>
+    <title>Rekap Laporan Warga - {{ date('d F Y') }}</title>
     <style>
+        @page {
+            margin: 24px 24px 28px 24px;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: DejaVu Sans, Arial, Helvetica, sans-serif;
             font-size: 10pt;
-            line-height: 1.4;
-            color: #333;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .header h1 {
-            color: #667eea;
-            font-size: 24pt;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 10pt;
-            margin: 3px 0;
-        }
-
-        .info-box {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-
-        .info-box table {
-            width: 100%;
-        }
-
-        .info-box td {
-            padding: 4px 0;
-            font-size: 9pt;
-        }
-
-        .info-box td:first-child {
-            font-weight: 600;
-            width: 150px;
-            color: #555;
-        }
-
-        .stats-grid {
-            display: table;
-            width: 100%;
-            margin-bottom: 25px;
-            border-collapse: collapse;
-        }
-
-        .stat-card {
-            display: table-cell;
-            width: 20%;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-            background: #f8f9fa;
-        }
-
-        .stat-card.total { border-left: 3px solid #667eea; }
-        .stat-card.menunggu { border-left: 3px solid #ffc107; }
-        .stat-card.diproses { border-left: 3px solid #17a2b8; }
-        .stat-card.selesai { border-left: 3px solid #28a745; }
-        .stat-card.ditolak { border-left: 3px solid #dc3545; }
-
-        .stat-number {
-            font-size: 22pt;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .stat-card.total .stat-number { color: #667eea; }
-        .stat-card.menunggu .stat-number { color: #ffc107; }
-        .stat-card.diproses .stat-number { color: #17a2b8; }
-        .stat-card.selesai .stat-number { color: #28a745; }
-        .stat-card.ditolak .stat-number { color: #dc3545; }
-
-        .stat-label {
-            font-size: 9pt;
-            color: #666;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        table.data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 9pt;
-        }
-
-        table.data-table thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        table.data-table th {
-            padding: 10px 8px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 9pt;
-            text-transform: uppercase;
-        }
-
-        table.data-table td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: top;
-        }
-
-        table.data-table tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 8pt;
-            font-weight: 600;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .badge.menunggu {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-
-        .badge.diproses {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .badge.selesai {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .badge.ditolak {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 2px solid #e2e8f0;
-            text-align: center;
-            font-size: 8pt;
-            color: #666;
-        }
-
-        .footer p {
-            margin: 3px 0;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-            font-style: italic;
-        }
-
-        table.data-table tr {
-            page-break-inside: avoid;
+            color: #1f2937;
+            line-height: 1.35;
+            position: relative;
         }
 
         .watermark {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 72pt;
-            color: rgba(102, 126, 234, 0.05);
+            top: 46%;
+            left: 52%;
+            transform: translate(-50%, -50%) rotate(-33deg);
+            font-size: 58pt;
             font-weight: 700;
+            color: rgba(37, 99, 235, 0.06);
             z-index: -1;
+            letter-spacing: 2px;
             white-space: nowrap;
+        }
+
+        .header {
+            border-bottom: 2px solid #1d4ed8;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .header-top {
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 18pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 3px;
+        }
+
+        .header-subtitle {
+            font-size: 10pt;
+            color: #475569;
+        }
+
+        .header-meta {
+            margin-top: 6px;
+            font-size: 8.8pt;
+            color: #64748b;
+        }
+
+        .block {
+            border: 1px solid #dbe3ef;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .block-title {
+            background: #eff6ff;
+            color: #1e3a8a;
+            font-weight: 700;
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 8px 10px;
+            border-bottom: 1px solid #dbe3ef;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 9pt;
+            vertical-align: top;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-table td:first-child {
+            width: 160px;
+            color: #475569;
+            font-weight: 700;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .stats-table td {
+            border-right: 1px solid #e2e8f0;
+            padding: 12px 8px;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .stats-table td:last-child {
+            border-right: none;
+        }
+
+        .stats-number {
+            display: block;
+            font-size: 18pt;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            font-size: 8.4pt;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+        }
+
+        .c-total { color: #1d4ed8; }
+        .c-menunggu { color: #b45309; }
+        .c-diproses { color: #1d4ed8; }
+        .c-selesai { color: #047857; }
+        .c-ditolak { color: #b91c1c; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.9pt;
+        }
+
+        .data-table thead th {
+            background: #1e40af;
+            color: #ffffff;
+            text-align: left;
+            font-size: 8.2pt;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 8px 7px;
+            border: 1px solid #1e3a8a;
+        }
+
+        .data-table td {
+            border: 1px solid #e2e8f0;
+            padding: 7px;
+            vertical-align: top;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .status {
+            display: inline-block;
+            font-size: 7.8pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-radius: 999px;
+            padding: 3px 8px;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .status.menunggu {
+            color: #92400e;
+            background: #ffedd5;
+            border-color: #fed7aa;
+        }
+
+        .status.diproses {
+            color: #1e3a8a;
+            background: #dbeafe;
+            border-color: #bfdbfe;
+        }
+
+        .status.selesai {
+            color: #065f46;
+            background: #d1fae5;
+            border-color: #a7f3d0;
+        }
+
+        .status.ditolak {
+            color: #991b1b;
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 7.8pt;
+        }
+
+        .no-data {
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-align: center;
+            padding: 24px 14px;
+            color: #64748b;
+            font-size: 10pt;
+        }
+
+        .signature-wrap {
+            margin-top: 18px;
+            width: 100%;
+        }
+
+        .signature-box {
+            width: 240px;
+            margin-left: auto;
+            text-align: center;
+            font-size: 9pt;
+            color: #334155;
+        }
+
+        .signature-space {
+            height: 62px;
+        }
+
+        .footer {
+            margin-top: 12px;
+            border-top: 1px solid #dbe3ef;
+            padding-top: 7px;
+            text-align: center;
+            font-size: 7.8pt;
+            color: #64748b;
+        }
+
+        .data-table tr {
+            page-break-inside: avoid;
         }
     </style>
 </head>
 <body>
-    {{-- Watermark --}}
-    <div class="watermark">LAPORAJA!</div>
+    <div class="watermark">LAPOR AJA</div>
 
-    {{-- Header --}}
-    <div class="header">
-        <h1>📊 LAPORAN WARGA</h1>
-        <p><strong>Sistem Pelaporan Aspirasi Warga</strong></p>
-        <p style="font-size: 8pt; color: #999; margin-top: 5px;">
-            Dicetak pada: {{ date('d F Y H:i') }}
-        </p>
-    </div>
+    <header class="header">
+        <div class="header-top">
+            <div class="header-title">Rekap Laporan Warga</div>
+            <div class="header-subtitle">Sistem Pelaporan Aspirasi Warga (LaporAja)</div>
+            <div class="header-meta">Dicetak: {{ date('d F Y H:i') }} WIB | Dicetak oleh: {{ auth()->user()->name ?? 'Admin' }}</div>
+        </div>
+    </header>
 
-    {{-- Info Export --}}
-    <div class="info-box">
-        <table>
+    <section class="block">
+        <div class="block-title">Informasi Export</div>
+        <table class="info-table">
             <tr>
                 <td>Jumlah Data</td>
-                <td>: {{ $stats['total'] }} Laporan</td>
+                <td>{{ $stats['total'] }} laporan</td>
             </tr>
             <tr>
                 <td>Filter Status</td>
-                <td>: {{ $filters['status'] == '' ? 'Semua Status' : ucfirst($filters['status']) }}</td>
+                <td>{{ $filters['status'] == '' ? 'Semua status' : ucfirst($filters['status']) }}</td>
             </tr>
             <tr>
-                <td>Filter Tanggal</td>
-                <td>: 
+                <td>Periode Tanggal</td>
+                <td>
                     @if($filters['start_date'] != 'Semua' && $filters['end_date'] != 'Semua')
-                        {{ date('d/m/Y', strtotime($filters['start_date'])) }} s/d {{ date('d/m/Y', strtotime($filters['end_date'])) }}
+                        {{ date('d/m/Y', strtotime($filters['start_date'])) }} sampai {{ date('d/m/Y', strtotime($filters['end_date'])) }}
                     @else
-                        Semua Tanggal
+                        Semua tanggal
                     @endif
                 </td>
             </tr>
+        </table>
+    </section>
+
+    <section class="block">
+        <div class="block-title">Ringkasan Statistik</div>
+        <table class="stats-table">
             <tr>
-                <td>Diekspor Oleh</td>
-                <td>: {{ auth()->user()->name ?? 'Admin' }}</td>
+                <td>
+                    <span class="stats-number c-total">{{ $stats['total'] }}</span>
+                    <span class="stats-label">Total</span>
+                </td>
+                <td>
+                    <span class="stats-number c-menunggu">{{ $stats['menunggu'] }}</span>
+                    <span class="stats-label">Menunggu</span>
+                </td>
+                <td>
+                    <span class="stats-number c-diproses">{{ $stats['diproses'] }}</span>
+                    <span class="stats-label">Diproses</span>
+                </td>
+                <td>
+                    <span class="stats-number c-selesai">{{ $stats['selesai'] }}</span>
+                    <span class="stats-label">Selesai</span>
+                </td>
+                <td>
+                    <span class="stats-number c-ditolak">{{ $stats['ditolak'] ?? 0 }}</span>
+                    <span class="stats-label">Ditolak</span>
+                </td>
             </tr>
         </table>
-    </div>
+    </section>
 
-    {{-- Statistics --}}
-    <div class="stats-grid">
-        <div class="stat-card total">
-            <div class="stat-number">{{ $stats['total'] }}</div>
-            <div class="stat-label">Total</div>
-        </div>
-        <div class="stat-card menunggu">
-            <div class="stat-number">{{ $stats['menunggu'] }}</div>
-            <div class="stat-label">Menunggu</div>
-        </div>
-        <div class="stat-card diproses">
-            <div class="stat-number">{{ $stats['diproses'] }}</div>
-            <div class="stat-label">Diproses</div>
-        </div>
-        <div class="stat-card selesai">
-            <div class="stat-number">{{ $stats['selesai'] }}</div>
-            <div class="stat-label">Selesai</div>
-        </div>
-        <div class="stat-card ditolak">
-            <div class="stat-number">{{ $stats['ditolak'] ?? 0 }}</div>
-            <div class="stat-label">Ditolak</div>
-        </div>
-    </div>
-
-    {{-- Data Table --}}
     @if($laporans->count() > 0)
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 30px;">No</th>
-                    <th style="width: 60px;">ID</th>
-                    <th style="width: 150px;">Pelapor</th>
-                    <th>Judul Laporan</th>
-                    <th style="width: 200px;">Isi Laporan</th>
-                    <th style="width: 80px;">Status</th>
-                    <th style="width: 90px;">Tanggal</th>
+                    <th style="width:30px; text-align:center;">No</th>
+                    <th style="width:58px;">ID</th>
+                    <th style="width:140px;">Pelapor</th>
+                    <th style="width:145px;">Judul</th>
+                    <th>Isi Laporan</th>
+                    <th style="width:80px; text-align:center;">Status</th>
+                    <th style="width:82px; text-align:center;">Tanggal</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($laporans as $index => $item)
                     <tr>
-                        <td style="text-align: center;">{{ $index + 1 }}</td>
+                        <td style="text-align:center;">{{ $index + 1 }}</td>
                         <td>#{{ str_pad($item->id, 4, '0', STR_PAD_LEFT) }}</td>
                         <td>
                             <strong>{{ $item->user->name ?? 'Anonim' }}</strong><br>
-                            <span style="font-size: 8pt; color: #666;">
-                                {{ $item->user->email ?? '-' }}
-                            </span>
+                            <span class="muted">{{ $item->user->email ?? '-' }}</span>
                         </td>
-                        <td><strong>{{ $item->judul }}</strong></td>
-                        <td style="font-size: 8pt;">
-                            {{ Str::limit($item->isi, 120) }}
+                        <td>
+                            <strong>{{ \Illuminate\Support\Str::limit($item->judul, 52) }}</strong>
                         </td>
-                        <td style="text-align: center;">
-                            <span class="badge {{ $item->status }}">
-                                {{ ucfirst($item->status) }}
-                            </span>
+                        <td>{{ \Illuminate\Support\Str::limit($item->isi, 120) }}</td>
+                        <td style="text-align:center;">
+                            <span class="status {{ $item->status }}">{{ ucfirst($item->status) }}</span>
                         </td>
-                        <td style="font-size: 8pt; text-align: center;">
+                        <td style="text-align:center;">
                             {{ $item->created_at->format('d/m/Y') }}<br>
-                            <span style="color: #999;">{{ $item->created_at->format('H:i') }}</span>
+                            <span class="muted">{{ $item->created_at->format('H:i') }}</span>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     @else
-        <div class="no-data">
-            <p>📭 Tidak ada data laporan yang sesuai dengan filter.</p>
-        </div>
+        <div class="no-data">Tidak ada data laporan sesuai filter saat ini.</div>
     @endif
 
-    {{-- Footer --}}
-    <div class="footer">
-        <p><strong>LaporAja!</strong> - Sistem Pelaporan Aspirasi Warga</p>
-        <p>Dokumen ini digenerate secara otomatis oleh sistem</p>
-        <p style="margin-top: 8px; font-size: 7pt; color: #999;">
-            © {{ date('Y') }} LaporAja! All rights reserved.
-        </p>
-    </div>
+    <section class="signature-wrap">
+        <div class="signature-box">
+            <div>Mengetahui,</div>
+            <div>Admin LaporAja</div>
+            <div class="signature-space"></div>
+            <div><strong>{{ auth()->user()->name ?? 'Admin' }}</strong></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        Dokumen ini dihasilkan otomatis oleh sistem pada {{ date('d F Y H:i') }} WIB.
+    </footer>
 </body>
 </html>

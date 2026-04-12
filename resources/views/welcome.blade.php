@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiPena - Layanan Pengaduan dan Aspirasi Warga</title>
+    <title>LaporAja! - Layanan Pengaduan dan Aspirasi Warga</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -346,7 +346,7 @@
                         <div class="brand-mark"><i class="fas fa-bullhorn"></i></div>
                         <div class="brand-copy">
                             <small>Portal Layanan Warga</small>
-                            <span>SiPena</span>
+                            <span>LaporAja!</span>
                         </div>
                     </a>
                     <nav class="nav-links">
@@ -479,7 +479,7 @@
                     <div class="cta-card">
                         <div>
                             <h3>Mulai bangun komunikasi warga yang lebih cepat dan transparan.</h3>
-                            <p>Gunakan SiPena untuk menghubungkan laporan warga dengan proses tindak lanjut yang lebih tertata. Tampilan baru ini menonjolkan rasa percaya, kemudahan, dan aksesibilitas di semua perangkat.</p>
+                            <p>Gunakan LaporAja! untuk menghubungkan laporan warga dengan proses tindak lanjut yang lebih tertata. Tampilan baru ini menonjolkan rasa percaya, kemudahan, dan aksesibilitas di semua perangkat.</p>
                         </div>
                         <div class="d-flex flex-wrap gap-3">
                             <a href="{{ route('login') }}" class="btn-outline-soft"><i class="fas fa-user-check"></i>Saya Sudah Punya Akun</a>
@@ -496,7 +496,7 @@
                     <div class="footer-note">
                         <div class="brand-mark"><i class="fas fa-bullhorn"></i></div>
                         <div>
-                            <div>SiPena</div>
+                            <div>LaporAja!</div>
                             <small class="text-secondary">Sistem Pengaduan dan Aspirasi Warga</small>
                         </div>
                     </div>
