@@ -494,19 +494,6 @@
             </li>
             
             <li class="dropdown-menu-custom">
-                <a href="{{route ('warga.profile')}}" class="dropdown-item-custom">
-                    <i class="fas fa-user"></i>
-                    <span>Profil Saya</span>
-                </a>
-                <a href="#" class="dropdown-item-custom">
-                    <i class="fas fa-cog"></i>
-                    <span>Pengaturan</span>
-                </a>
-                <a href="#" class="dropdown-item-custom">
-                    <i class="fas fa-bell"></i>
-                    <span>Notifikasi</span>
-                </a>
-                
                 <div class="dropdown-divider-custom"></div>
                 
                 <div class="px-2">
